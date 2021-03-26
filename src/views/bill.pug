@@ -1,0 +1,88 @@
+link(href='//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css' rel='stylesheet')
+script(src='//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js')
+script(src='/plugins/jquery/jquery.min.js')
+.container
+  p 
+    span 
+      b(style='color: red') Địa chỉ nhận hàng : 
+    //-   span #{address.name}, #{address.address}, #{address.city}, #{address.town}, #{address.commune}, #{address.phonenumber}
+  .row
+    if(cart && cart.length)
+      .col-sm-12.col-md-10.col-md-offset-1
+        table.table.table-hover
+          thead
+            tr
+              th Sản phẩm
+              th Số lượng
+              th.text-center Giá
+              th.text-center Thành Tiền
+              th &nbsp;
+          tbody
+            each a in cart 
+              each i in a.bookcarts
+                tr
+                  td.col-sm-8.col-md-6 
+                    .media
+                      a.thumbnail.pull-left(href='#')
+                        img.media-object(src='/uploads/'+a.image, style='width: 72px; height: 72px;')
+                      .media-body
+                        h4.media-heading
+                          a(href='/thong-tin-book/'+a.id) #{a.title}
+                  td.col-sm-1.col-md-1(style='text-align: center')
+                    input.form-control(id="exampleInputNumber1"+a.id, type='number',value=i.soluongdat, onclick = "tangsoluong("+i.id+","+a.id+")" readonly) 
+                  td.col-sm-1.col-md-1.text-center
+                    strong(id = 'giatien'+a.id) #{a.cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  td.col-sm-1.col-md-1.text-center
+                    strong(id = 'thanhtien'+a.id) #{(i.soluongdat * a.cost).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  td.col-sm-1.col-md-1
+                    button.btn.btn-danger(type='button')
+                      span.glyphicon.glyphicon-remove
+                      |  Xóa
+                tr
+                  td  &nbsp;
+                  td  &nbsp; 
+                  td
+                    h5 Đơn vị vẫn chuyển
+                  td.text-right
+                    select(name="",id = "don" )
+                      option(value="")
+                      each s in ship
+                        option(value=s.id , id= "shipId" ) #{s.nameship.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} #{s.costship}
+
+                        span #{s.costship}
+                tr
+                  td  &nbsp; 
+                  td  &nbsp; 
+                  td  &nbsp; 
+                  td
+                    h5 Tổng tiền hàng
+                  td.text-right
+                    h5
+                      strong(id = 'tienhang') #{(a.cost * i.soluongdat).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                tr
+                  td  &nbsp; 
+                  td  &nbsp; 
+                  td  &nbsp; 
+                  td
+                    h5 Phí vận chuyển
+                  td.text-right
+                    h5
+                      strong(id = 'ship') 
+                tr
+                  td  &nbsp; 
+                  td  &nbsp; 
+                  td  &nbsp; 
+                  td
+                    h3 Tổng thanh toán
+                  td.text-right
+                    h3
+
+                      //- strong(id = 'tongthanhtoan') #{(a.cost * i.soluongdat + s.costship).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+      .col-sm-12.col-md-10.col-md-offset-1
+        button.btn.btn-default(type='button')
+          span.glyphicon.glyphicon-shopping-cart
+            | Tiếp tục mua sắm
+        button.btn.btn-success(type='button', style= "float : right")
+          | Thanh Toán   
+          span.glyphicon.glyphicon-play
+

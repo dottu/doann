@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "10"
+        }
+      }
+    ],
+    "@babel/preset-react"
+  ],
+  "ignore": ["**/__tests__/**", "*.test.js", "*.spec.js"],
+  "env": {
+    "development" : {
+      "compact": false
+    }
+  }
+}

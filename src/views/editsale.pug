@@ -1,0 +1,61 @@
+//- extends ../views/layout/layout.pug
+
+//- block content
+//-     section.content
+//-         .container-fluid
+//-             .row
+//-                 .col-md-6
+//-                     .card.card-primary
+//-                         .card-header
+//-                             h3.card-title Create Sale
+//-                         form(action = '/create-sale/'+editsale.id, method = 'POST')
+//-                             .card-body
+//-                                 .form-group 
+//-                                     label Mã sản phẩm
+//-                                     select.custom-select(name='bookId')
+//-                                         option(value=editsale.id) #{editsale.masp} 
+//-                                 each ab in editsale.sales
+//-                                     .form-group 
+//-                                         label Sale
+//-                                         input#exampleInputPassword1.form-control(type='text',name = 'sale', value = ab.sale)
+
+//-                             .card-footer
+//-                                 button.btn.btn-primary(type='submit') Submit      
+//-                     if(view && view.length)
+//-                         table.table.table-hover.text-nowrap
+//-                             thead
+//-                             tr
+//-                                 th ID
+//-                                 th Image
+//-                                 th Title
+//-                                 //- th Category
+//-                                 th Cost
+//-                                 th Sale
+//-                                 th CreateAt
+//-                                 th UpdateAt
+//-                                 th
+//-                                 th
+//-                             tbody
+//-                                 each a in view
+//-                                     each i in a.sales
+//-                                         tr
+//-                                             td #{a.id}
+//-                                             td 
+//-                                                 img(src="/uploads/"+a.image, alt="", style = "width : 50px; height: 30px")
+//-                                             td #{a.title}
+//-                                             //- td #{a.namecategory}
+//-                                             td #{a.cost}
+//-                                             td #{i.sale}
+//-                                             td #{a.createdAt}
+//-                                             td #{a.updatedAt}
+//-                                             td 
+//-                                                 button.btn.btn-danger(type='button', style = "background: green;" , onclick = "edit("+a.id+","+i.id+")")
+//-                                                     span.glyphicon.glyphicon-edit
+//-                                                         a(href="/create-sale/"+i.id, style = "color: white") Sửa
+//-                                             td 
+//-                                                 button.btn.btn-danger(type='button', onclick = "edit("+a.id+","+i.id+")")
+//-                                                     span.glyphicon.glyphicon-remove
+//-                                                         |  Xóa
+//-                         button.btn.btn-danger(type='button')
+//-                             span.glyphicon.glyphicon-remove
+//-                                 a(href="/create-sale", style = "color: white") Quay lại

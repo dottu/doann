@@ -1,0 +1,45 @@
+each ma in magiamgia
+    tr(id = 'xoama'+ma.id)
+        td #{ma.id}
+        td #{ma.magiamgia}
+        td #{ma.status}
+        td #{ma.sotiengiam}
+        //- td #{ma.timesale}
+        td #{ma.ngaybatdau}
+        td #{ma.ngayketthuc}
+        td 
+            button.btn.btn-danger(type='button' data-toggle='modal' data-target='#formm'+ma.id, style = "background: green;" )
+                span.glyphicon.glyphicon Sửa
+            .modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true', id = 'formm'+ma.id)
+                .modal-dialog.modal-dialog-centered(role='document')
+                    .modal-content
+                        .modal-header.border-bottom-0
+                            h5#exampleModalLabel.modal-title Sửa mã giảm giá
+                            button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                span(aria-hidden='true') &times;
+                        form(action="/editmagiamgia" ,method="POST", id ="editmagiamgia" )
+                            .modal-body                 
+                                .form-group
+                                    label(for='id') ID
+                                    input.form-control(type='text' ,name = 'id' value=ma.id readonly)                 
+                                .form-group
+                                    label(for='magiamgia') Mã giảm giá
+                                    input.form-control(type='text' ,name = 'magiamgia', value=ma.magiamgia readonly)
+                                .form-group
+                                    label(for='sotiengiam') Số tiền giảm
+                                    input.form-control(type='text' ,name = 'sotiengiam', value=ma.sotiengiam , id ='editsotiengiam')
+                                    span.error(id = 'error_editsotiengiam')
+                                .form-group
+                                    label(for='timesale') Ngày bắt đầu
+                                    input.form-control(type='date' ,name = 'timesale', value=ma.sotiengiam , id ='edittimesale')
+                                    span.error(id = 'error_editstart')                                
+                                .form-group 
+                                    label(for='sotiengiam') Ngày kết thúc
+                                    input.form-control(type='date' ,name = 'sotiengiam', value=ma.sotiengiam , id ='editend')
+                                    span.error(id = 'error_editend')
+                            .modal-footer.border-top-0.d-flex.justify-content-center
+                                button.btn.btn-success(type='submit') Sửa mã giảm giá
+        td 
+            button.btn.btn-danger(type='button', onclick= "xoamagiamgia("+ma.id+")")
+                span.glyphicon.glyphicon-remove
+                    |  Xóa

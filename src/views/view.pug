@@ -1,0 +1,134 @@
+extends ../views/layout/nav.pug
+
+block content
+  div 
+    | Sắp xếp theo :
+    div.sort-a
+      //- form(action="/giathap", method="get") 
+      //-   input(type="hidden", name="price")
+      a.sort-list(href="/gia?a=giathap") Giá thấp
+      a.sort-list(href="/gia?a=giacao") Giá cao
+  .abc
+    each im in book
+      img.slide(src='/uploads/'+im.image idx=+c alt='')
+    img(class="btn-change" id="next" src="/icon/next.png" alt="")
+    img(class="btn-change" id="prev" src="/icon/prev.png" alt="")
+    //- img#next.btn-change(src='icon/next.png' alt='')
+    //- img#prev.btn-change(src='icon/prev.png' alt='')
+    //- .change-img
+    //-   button.active(idx='0') 1
+    //-   button(idx='1') 2
+    //-   button(idx='2') 3
+    //-   button(idx='3') 4
+
+  //-     //- .slide
+  //-     //-   img(src='https://images.pexels.com/photos/3578393/pexels-photo-3578393.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260')
+  //-     //- .slide
+  //-     //-   img(src='https://images.pexels.com/photos/4484184/pexels-photo-4484184.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260')
+
+  section.content
+    .card.card-solid
+      .card-body.pb-0
+        .row.d-flex.align-items-stretch
+          if(book && book.length)
+            each bk in book
+              each sale in bk.sales
+                .col-12.col-sm-6.col-md-4.d-flex.align-items-stretch
+                  .card.bg-light.carta
+                    if(bk.status == '1')
+                      a(href='/thong-tin-book/'+bk.id) 
+                        img(src="/uploads/"+bk.image, style = "width : 350px; height : 200px")
+                      br
+                      .card-body.pt-0#title
+                        .div
+                          span #{bk.title}
+                        .cost
+                          - var abc = sale.sale.replace(/%/g, '')
+                          - var giam = Number(abc)/100
+                          del #{bk.cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
+                          br 
+                          b #{(bk.cost - (bk.cost * giam)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
+                        .sale  
+                          p #{sale.sale}
+                    //- .text-right
+                    //-     a.btn.btn-sm.bg-teal(href='#')
+                    //-         i.fas.fa-comments Mua hang
+                    //-     a.btn.btn-sm.btn-primary(href='#')
+                    //-         i.fas.fa-user
+                    //-         |  Them gio hang
+      .card-footer
+        nav(aria-label='Contacts Page Navigation')
+          ul.pagination.justify-content-center.m-0
+            li.page-item.active
+              - var back = a - 1
+              if(back == 0)
+                a.page-link(href="/?page=1")
+                  i.fa.fa-arrow-left
+              else
+                a.page-link(href='/?page='+back) 
+                  i.fa.fa-arrow-left
+            - for (var i =1 ; i <= page ; i++)
+              li.page-item.active
+                a.page-link(href='/?page='+i)
+                  span #{i}
+            li.page-item.active
+              - var next = a + 1
+              if(next > page)
+                a.page-link(href="/?page="+a)
+                  i.fa.fa-arrow-right
+              else
+                a.page-link(href="/?page="+next)
+                  i.fa.fa-arrow-right
+  script.
+    //- $(function() {
+    //-   $('.demoslide img:gt(0)').hide();
+    //-   setInterval(function(){
+    //-       $('.demoslide :first-child').fadeOut() //FadeOut là ảnh đang hiện
+    //-       .next('img').fadeIn() //fadeIn ảnh tiếp theo
+    //-       .end().appendTo('.demoslide'); // chuyển vị trí ảnh xuống cuối
+    //-     }, 3000);
+    //- })
+    console.log($)
+    $(document).ready(function () {
+      var stt = 0;
+      var endImg = $("img.slide:last").attr("idx");
+
+      $("button").click(function () {
+        stt = $(this).attr("idx");
+
+        changeImg(stt);
+      });
+
+      $("#next").click(function () {
+        if (++stt > endImg) {
+          stt = 0;
+        }
+
+        changeImg(stt);
+      });
+
+      $("#prev").click(function () {
+        if (--stt < 0) {
+          stt = endImg;
+        }
+
+        changeImg(stt);
+      });
+
+      var interval;
+      var timer = function () {
+        interval = setInterval(function () {
+          $("#next").click();
+        }, 5000);
+      };
+      timer();
+    });
+    function changeImg(stt) {
+      $("img.slide").hide();
+      $("img.slide").eq(stt).fadeIn(500);
+      $("button").removeClass("active");
+      $("button").eq(stt).addClass("active");
+
+      clearInterval(interval);
+      timer();
+    };

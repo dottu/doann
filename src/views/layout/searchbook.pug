@@ -1,0 +1,76 @@
+each a in view
+    each i in a.books 
+            tr(id = "deletebooks")
+                td #{i.id}
+                td #{i.masp}
+                td 
+                    img(src="/uploads/"+i.image, alt="", style = "width : 50px; height: 30px")
+                td #{i.title}
+                td #{i.author}
+                td #{a.namecategory}
+                td #{i.cost}
+                //- td #{sale.sale}
+                td 
+                    //- button.btn.btn-danger(style = 'background : green', , id = 'bnttrangthai'+i.id)
+                    //-   if(i.status == 1)
+                    //-     span.glyphicon.glyphicon-edit(id = 'trangthai'+i.id ,onclick = 'trangthai('+i.id+','+i.status+')') 
+                    //-       |  Bật
+                    //-   else 
+                    //-     span.glyphicon.glyphicon-edit(id = 'trangthai'+i.id, onclick = 'trangthai('+i.id+','+i.status+')') 
+                    //-       |  Tắt
+                    if(i.status == 1)
+                        button.btn.btn-danger.glyphicon.glyphicon-edit(style = 'background : green',  onclick = 'trangthai('+i.id+','+i.status+')', id = 'trangthai'+i.id) Bật
+                    else
+                        button.btn.btn-danger.glyphicon.glyphicon-edit(style = 'background : grey', onclick = 'trangthai('+i.id+','+i.status+')' , id = 'trangthai'+i.id) Tắt
+                td #{i.createdAt}
+                td #{i.updatedAt}
+                td 
+                    button.btn.btn-danger(type='button' data-toggle='modal' data-target='#form'+i.id, style = "background: green;" )
+                        span.glyphicon.glyphicon-edit
+                        |  Sửa 
+                    .modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true' id = 'form'+i.id)
+                        .modal-dialog.modal-dialog-centered(role='document')
+                            .modal-content
+                                .modal-header.border-bottom-0
+                                    h5#exampleModalLabel.modal-title Sửa sản phẩm
+                                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                        span(aria-hidden='true') &times;
+                                form(action="/editbook" method="POST", id ='editbook' ,enctype="multipart/form-data")
+                                    .modal-body                                  
+                                        .form-group
+                                            label(for='masp') ID Sản Phẩm
+                                            input.form-control(type='text' ,name = 'id' value=i.id readonly)
+                                        .form-group
+                                            label(for='masp') Mã Sản Phẩm
+                                            input.form-control(type='text' , value=i.masp, name = 'masp' placeholder='Nhập mã sản phẩm', id ='editmasp')
+                                            span.error(id= 'error_editmasp')
+                                        .form-group
+                                            label(for='image') Hình ảnh sản phẩm
+                                            input.form-control(type='file', value=i.image,name = 'image', id = 'editimage')
+                                            span.error(id = 'error_editimage')
+                                        .form-group
+                                            label(for='title') Tiêu đề  sản phẩm
+                                            input.form-control(type='text', value=i.title, name = 'title' placeholder='Nhập tiêu đề sản phẩm' id='edittitle')
+                                            span.error(id = 'error_edittitle')
+                                        //- .form-group
+                                        //-   label(for='description') Tóm tắt 
+                                        //-   input.form-control(type='text', value=i.title, name = 'description' placeholder='Nhập tiêu đề sản phẩm' id='editdescription')
+                                        //-   span.error(id = 'error_editdescription')
+                                        .form-group
+                                            label(for='author') Tác giả
+                                            input.form-control(type='text', value=i.author,name = 'author' placeholder='Nhập tác giả', id ='editauthor')
+                                            span.error(id= 'error_editauthor')
+                                        .form-group
+                                            label(for='cost') Giá tiền
+                                            input.form-control(type='text', value=i.cost, name = 'cost' placeholder='Nhập giá tiền', id = 'editgiatien')
+                                            span.error(id = 'error_editgiatien')
+                                        //- .form-group
+                                        //-   label(for='soluong') Số lượng
+                                        //-   input#password2.form-control(type='text', value=i., placeholder='Nhập số lượng')
+                                    .modal-footer.border-top-0.d-flex.justify-content-center
+                                        button.btn.btn-success(type='submit') Sửa sản phẩm
+
+                td 
+                    button.btn.btn-danger(type='button', onclick = "deletebook("+i.id+")")
+                        span.glyphicon.glyphicon-remove
+                        |  Xóa 

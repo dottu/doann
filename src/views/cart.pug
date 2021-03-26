@@ -1,0 +1,545 @@
+extends ../views/layout/nav.pug
+
+block stylesheet
+  script(src='/jquery/jquery-3.5.1.min.js')
+  link(href='/css/style.css' rel='stylesheet')
+  link(href='/css/error.css' rel='stylesheet')
+block content
+
+    .row
+      if(cart.length === 0)
+        div.empty
+          img(src="/uploads/mascot@2x.png", alt="alt", style = 'width :190px')
+          p Không có sản phẩm nào trong giỏ hàng của bạn.
+          a.empty-btn(href="/") Tiếp tục mua sắm
+      else
+        .col-sm-12.col-md-10.col-md-offset-1
+          div
+            button.btn.btn-danger(type='button' data-toggle='modal' data-target='#form', style = 'background: green')
+              span.glyphicon.glyphicon-edit
+                | Thêm địa chỉ
+            #form.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+              .modal-dialog.modal-dialog-centered(role='document')
+                .modal-content
+                  .modal-header.border-bottom-0
+                    h5#exampleModalLabel.modal-title Thêm địa chỉ
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                      span(aria-hidden='true') &times;
+                  form(action="/diachi" method="POST", id ='thongtin' )
+                    .modal-body                                  
+                      .form-group
+                        label(for='') Họ và tên
+                        input.form-control(type='text' ,name = 'name' placeholder='Họ và tên', id ='nhapten')
+                        span.error#error_ten
+                      .form-group
+                        label(for='') Email
+                        input.form-control(type='text' ,  name = 'email' placeholder='Nhập Email', id ='nhapemail')
+                        span.error#error_email
+                      .form-group
+                        label(for='') Số điện thoại
+                        input.form-control(type='phonenumber',name ="phonenumber" placeholder='Số điện thoại' id='nhapphone')
+                        span.error#error_phone
+                      .form-group
+                        label(for='title') Địa chỉ nhận hàng
+                        input.form-control(type='text', name = 'address' placeholder='Nhập Địa chỉ nhận hàng ' id='nhapaddress')
+                        span.error#error_address
+                      //- .form-group
+                      //-   label(for='soluong') Số lượng
+                      //-   input#password2.form-control(type='text', value=i., placeholder='Nhập số lượng')
+                    .modal-footer.border-top-0.d-flex.justify-content-center
+                      button.btn.btn-success(type='submit',) Thêm thông tin 
+            h2 Địa chỉ nhân hàng : 
+            form(action="/thanhtoan", method="post" , id= 'bill') 
+              each add in address
+                each il in add.addresses
+                  div
+                    input(type="radio", name="" ,value=add.id, id = 'addressId')
+                    span(style ="padding : 0 20px") #{add.name}  -  #{add.phonenumber}   -   #{il.address}
+                    span#error_diachi.error
+            h2 Thông tin giao hàng 
+            //- form#thongtin(action="/thanhtoan" method="post")
+            //-   input.form-control(type= "text",name = "name" placeholder='Họ và tên', id ='nhapten')
+            //-   span#error_ten
+            //-   input.form-control(type= "email",name ="email" placeholder='Email' id='nhapemail')
+            //-   span#error_email
+            //-   input.form-control(type= "tel",name ="phonenumber" placeholder='Số điện thoại' id='nhapphone')
+            //-   span#error_phone
+            //-   input.form-control(type= "text" name="address" placeholder='Địa chỉ', id ='nhapaddress')
+            //-   span#error_address
+            //- button.btn.btn-success(type='submit')
+            //-   | Thongtin   
+            //-   span.glyphicon.glyphicon-play
+          div
+          table.table.table-hover
+            thead
+              tr
+                th Sản phẩm
+                th Số lượng
+                th Giá
+                th Thành Tiền
+                th &nbsp;
+            - var tong = 0
+            - var ship = 40000
+            //- - console.log(ab)
+            //- each a in cart 
+            //-   each i in a.bookcarts
+            //-       tbody
+            //-             tr
+            //-               td.col-sm-8.col-md-6 
+            //-                 .media
+            //-                   a.thumbnail.pull-left(href='#')
+            //-                     img.media-object(src='/uploads/'+a.image, style='width: 72px; height: 72px;')
+            //-                   .media-body
+            //-                     h4.media-heading
+            //-                       a(href='/thong-tin-book/'+a.id) #{a.title}
+            //-               td.col-sm-1.col-md-1(style='text-align: center')
+            //-                 input.form-control(id="exampleInputNumber1"+a.id, type='number' value=i.soluongdat, onclick = "tangsoluong("+i.id+","+a.id+")") 
+            //-               td.col-sm-1.col-md-1.text-center
+            //-                   strong(id = 'giatien'+a.id) #{a.cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+            //-               td.col-sm-1.col-md-1.text-center
+            //-                 strong(id = 'thanhtien'+a.id) #{(i.soluongdat * a.cost).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+            //-               td.col-sm-1.col-md-1
+            //-                 button.btn.btn-danger(type='button', onclick = "deletesanpham("+i.id+")")
+            //-                   span.glyphicon.glyphicon-remove
+            //-                   |  Xóa        
+            //- - var tong = 1000
+            - for(var a=0; a < cart.length; a++)
+              //- var carthientai = cart[a];
+              //- var bookcartcuahientai = carthientai.bookcarts
+              - for(var i = 0; i < cart[a].bookcarts.length; i++)
+                //- - var itemcarhientai = cart[a].bookcarts[i]
+                tbody
+                  tr(id = 'id'+cart[a].bookcarts[i].id)
+                    td.col-sm-8.col-md-6 
+                      .media
+                        a.thumbnail.pull-left(href='#')
+                          img.media-object(src='/uploads/'+cart[a].image, style='width: 72px; height: 72px;')
+                        .media-body
+                          h4.media-heading
+                            a(href='/thong-tin-book/'+cart[a].id) #{a.title}
+                    //- td.col-sm-1.col-md-1(style='text-align: center')
+                      input.form-control(id="exampleInputNumber1"+cart[a].id, type='number' value=cart[a].bookcarts[i].soluongdat, onclick = "tangsoluong("+cart[a].bookcarts[i].id+","+cart[a].id+")")
+                    td.col-sm-1.col-md-1(style='text-align: center')
+                      .buttons_added
+                        input.minus.is-form(type='button' value='-', onclick = "giamsoluong("+cart[a].bookcarts[i].id+","+cart[a].id+")")
+                        input.input-qty(aria-label='quantity' max='10' min='1' name='' type='number' value=+cart[a].bookcarts[i].soluongdat, id="soluong"+cart[a].id+cart[a].bookcarts[i].id readonly)
+                        input.plus.is-form(type='button' value='+', onclick = "tangsoluong("+cart[a].bookcarts[i].id+","+cart[a].id+")")
+                    td.col-sm-1.col-md-1.text-center
+                      strong(id = 'giatien'+cart[a].id) #{(cart[a].bookcarts[i].giasale).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                    td.col-sm-1.col-md-1.text-center
+                      strong(id = 'thanhtien'+cart[a].id+cart[a].bookcarts[i].id) #{(cart[a].bookcarts[i].soluongdat * cart[a].bookcarts[i].giasale).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                    td.col-sm-1.col-md-1
+                      button.btn.btn-danger(type='button', onclick = "deletesanpham("+cart[a].bookcarts[i].id+","+cart[a].id+")")
+                        span.glyphicon.glyphicon-remove
+                        |  Xóa        
+                //- - var listid = []
+                //- - var abc = {bookcartid : cart[a].bookcarts[i].id}
+                //- - listid.push(abc) 
+                //- - return listid 
+                - var tong = tong + (cart[a].bookcarts[i].soluongdat * cart[a].bookcarts[i].giasale)
+            tfoot      
+              tr
+                td  &nbsp; 
+                td  &nbsp; 
+                td  &nbsp; 
+                td
+                  form(action="/magiamgia" method="POST", id= "magiamgia")
+                    input(type="text" name="magiamgia" size="10" placeholder="Mã giảm giá", value = "" , id = "checkma" ,style = 'border-radius: 10px')
+                  span(id= 'check')   
+                td 
+                  button.btn.btn-success(type = "button", onclick = "magiamgia()")
+                    span.glyphicon.glyphicon  
+                      | Sử dụng              
+              tr
+                td
+                  h5 Tổng tiền hàng 
+                td  &nbsp; 
+                td  &nbsp; 
+                td  &nbsp; 
+                td.text-right
+                  h5(id = 'tong') #{tong.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+
+                    //- strong(id = 'tienhang') #{(a.cost * i.soluongdat).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              tr
+                td
+                  h5 Phí vận chuyển 
+                td  &nbsp; 
+                td  &nbsp; 
+                td  &nbsp; 
+                td.text-right
+                  h5 
+                    strong(id = 'ship') #{ship.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              tr
+                td
+                  h3 Tổng thanh toán
+                td  &nbsp; 
+                td  &nbsp; 
+                td  &nbsp; 
+                td.text-right
+                  h3(id='tongthanhtoan') #{(tong+ship).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                    //- span đ
+              tr  
+                td                                          
+                  button.btn.btn-default(type='button',)
+                    span.glyphicon.glyphicon-shopping-cart
+                      a(href="/")
+                        | Tiếp tục mua sắm
+                td  &nbsp; 
+                td  &nbsp; 
+                td  &nbsp;
+                td
+                  button.btn.btn-success(type='submit',style="width: 150px;background: red;", onclick= 'thanhtoan()')
+                    | Thanh Toán   
+                    span.glyphicon.glyphicon-play
+
+
+
+    script.
+      //Tang so luong
+      console.log('$',$)
+      function tangsoluong(bookcartid, bookid){
+        console.log(bookcartid)
+        var a = $('#soluong'+bookid+bookcartid).val()
+        console.log('a', a)
+        $.ajax({
+          type: 'POST',
+          url : '/tangsoluong',
+          data :{
+            id : bookcartid,
+            bookId : bookid,
+            soluongdat: Number(a)+1,
+          }, 
+          success: function(res){
+            //- console.log(res)
+            //giamgia
+            var giamgia = 0;
+            if($('#check').text()){
+              laygia = $('#check').text()
+              laygia = laygia.replace(/Bạn được giảm/g, '');
+              laygia = laygia.replace(/\./g, '');
+              giamgia = giamgia + Number(laygia)
+              console.log("giamgia",giamgia)
+            }else{
+              giamgia 
+            }
+            //lay gia tien
+            let giatien = $('#giatien'+bookid).text()
+            console.log('giatien', giatien);
+            giatien = giatien.replace(/\./g, '');
+            console.log('giatien', giatien);
+            let soluong = $('#soluong'+bookid+bookcartid).val()
+            let tangsl = Number(soluong) + 1;
+            let soluonghientai = $('#add-to-cart').val()
+
+            console.log('soluong', tangsl)
+
+            let tongtien = $('#tong').text()
+            let ship = $('#ship').text()
+            tongtien = tongtien.replace(/\./g, '')
+            ship = ship.replace(/\./g, '')
+            console.log('asad',  tongtien)
+            console.log('giatien',typeof giatien)
+            console.log('soluong',typeof tangsl)
+
+            //tinh tong tien ....
+            let thanhtien = Number(giatien) * Number( tangsl)
+            let tongtienhang = Number(tongtien) + Number(giatien)
+            let tongthanhtoan = Number(tongtienhang) + Number(ship) - giamgia
+            let soluongsaukhitang = Number(soluonghientai) + Number(tangsl)
+
+            console.log('as',tongthanhtoan)
+            console.log('thanhtien',thanhtien)
+
+            //thay doi gia tri tren html sau khi click ' + '
+            $('#thanhtien'+bookid+bookcartid).text(thanhtien.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+            $('#soluong'+bookid+bookcartid).attr('value',tangsl)
+            //sau khi tang sl
+            //- let tangsl = soluong + 1
+            //- if(soluongdat -1)
+            $('#tong').text(tongtienhang.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+            $('#tongthanhtoan').text(tongthanhtoan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+            $('#add-to-cart').text(soluongsaukhitang)
+          }
+        })
+      }
+
+      //Giamsoluong
+      function giamsoluong(bookcartid, bookid){
+        var a = Number($('#soluong'+bookid+bookcartid).val())
+        let b;
+        if(a > 1){
+          b = a - 1
+          console.log('b',b)
+        }
+        else if (a <= 0 || a < 0){
+          b = a +1
+          console.log("b",b)
+        }
+        console.log('a',a)
+        console.log("b",b)
+        $.ajax({
+          type: 'POST',
+          url : '/tangsoluong',
+          data :{
+            id : bookcartid,
+            bookId : bookid,
+            soluongdat: b,
+          },
+          success : function(res){
+
+            //giamgia
+            var giamgia = 0;
+            if($('#check').text()){
+              laygia = $('#check').text()
+              laygia = laygia.replace(/\./g, '')
+              laygia = laygia.replace(/Bạn được giảm/g,'')
+              giamgia = giamgia + Number(laygia)
+              console.log("giamgia",giamgia)
+            }
+            //lay gia tien
+            let giatien = $('#giatien'+bookid).text()
+            //bo dau .
+            giatien = giatien.replace(/\./g, '');
+            //laysoluong
+            let soluong = $('#soluong'+bookid+bookcartid).val()
+
+            //lay tong tien && lay tien ship tren html 
+            let tongtien = $('#tong').text()
+            let ship = $('#ship').text()
+            tongtien = tongtien.replace(/\./g, '')
+            ship = ship.replace(/\./g, '')
+
+            let soluonghientaii = $('#add-to-cart').text()
+            console.log('hientai', typeof soluonghientaii)
+
+            let giamsoluong = Number(soluong);
+            let thanhtien = Number(giatien) * giamsoluong
+            console.log('o day', thanhtien)
+            
+            console.log('giamsl', giamsoluong)
+            //- console.log('so',soluongsaukhigiam)
+            giamsl = 1
+            //giamsoluong
+            if (Number($('#soluong'+bookid+bookcartid).val()) <= 0){
+              soluong = Number($('#soluong'+bookid+bookcartid).val()) + 1
+              console.log( 'soluong', soluong)
+            }
+            else if(Number($('#soluong'+bookid+bookcartid).val()) <0){
+              soluong = Number($('#soluong'+bookid+bookcartid).val()) + 2
+              console.log('soluong',soluong)
+            }
+            else if(Number($('#soluong'+bookid+bookcartid).val()) > 1){
+              soluong = $('#soluong'+bookid+bookcartid).val()
+              giamsoluong = Number(soluong) - 1;
+              let soluongsaukhigiam = Number(soluonghientaii) - Number(giamsoluong)
+              thanhtien = Number(giatien) * Number(giamsoluong)
+              $('#add-to-cart').text(soluongsaukhigiam)
+              console.log('vaoday', thanhtien)
+            }
+            console.log("thanhtien",thanhtien)
+            let tongtienhangsaukhigiam = Number(tongtien) - Number(giatien)
+            let tongthanhtoansaukhigiam = Number(tongtienhangsaukhigiam) + Number(ship) - giamgia
+            console.log('tongtienhanggiam',tongtienhangsaukhigiam)
+            console.log('tongthanhtoangiam',tongthanhtoansaukhigiam)
+
+            $('#thanhtien'+bookid+bookcartid).text(thanhtien.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+
+            //check soluong khi click '-'
+            if(soluong <= 0 || soluong <0){
+              $('#soluong'+bookid+bookcartid).attr('value',Number(giamsl))
+              //- $('#tong').text(tongtienhangsaukhigiam.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+              //- $('#tongthanhtoan').text(tongthanhtoansaukhigiam.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+            }
+            else if(soluong > 1){
+              $('#soluong'+bookid+bookcartid).attr('value',giamsoluong)
+              //- $('#add-to-cart').text(soluongsaukhigiam)
+              $('#tong').text(tongtienhangsaukhigiam.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+              $('#tongthanhtoan').text(tongthanhtoansaukhigiam.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+            }
+          }
+        })
+      }
+
+
+      // DELETE San pham
+      function deletesanpham(bookcartid, bookid){
+        $.ajax({
+          type: 'GET',
+          url: '/deleteproducts',
+          data: {
+            id: bookcartid
+          },
+          success: function(res){
+
+            //lay gia tri tren html
+            let giatien = $('#giatien'+bookid).text()
+            giatien = giatien.replace(/\./g, '');
+            console.log('giatien', giatien)
+            let soluong = $('#soluong'+bookid+bookcartid).val()
+            let tongtien = $('#tong').text()
+            let ship = $('#ship').text()
+            let soluonghientai = $('#add-to-cart').text()
+            console.log('soluonghientai', soluonghientai)
+            tongtien = tongtien.replace(/\./g, '')
+            ship = ship.replace(/\./g, '')
+            console.log('soluong', soluong)
+            console.log('tongtien',tongtien)
+
+            //
+            let thanhtien = Number(giatien) * Number(soluong)
+            let tongtienhang = Number(tongtien) - thanhtien
+            let tongthanhtoan = Number(tongtienhang)+Number(ship)
+            let soluongsaukhixoa = Number(soluonghientai) - Number(soluong)
+            //
+            console.log('thanhtien',thanhtien)
+            console.log('tongtienhang', tongtienhang)
+            console.log('tongthanhtoan',tongthanhtoan)
+
+            // thay doi gia tri tren html 
+            $('#thanhtien'+bookid+bookcartid).text(thanhtien.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+            $('#tong').text(tongtienhang.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+            $('#tongthanhtoan').text(tongthanhtoan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+            $('#add-to-cart').text(soluongsaukhixoa)
+            $('#id'+bookcartid).remove()
+          }
+        })
+      }
+
+
+      //Button Mã giảm giá
+      function magiamgia(){
+
+        //lay ma
+        var a = $('#checkma').val()
+        console.log('aa',a)
+
+        $.ajax({
+          type:'POST',
+          url : '/magiamgia',
+          data : {
+            magiamgia : a
+          },
+          success: function(res){
+            //- $('#magiamgia').submit() 
+            console.log("res",res)
+            if(a == res.magiamgia){
+              if(res.sale == null){
+                $('#check').text('Bạn được giảm '+res.giamgia.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+                //lay tong thanh toan 
+                var tongthanhtoan = $('#tongthanhtoan').text()
+                tongthanhtoan = tongthanhtoan.replace(/\./g, '')
+                console.log('iiiiiiiiiii', $('#tong').val())
+                // tien giam
+                var tiengiamgia = Number(tongthanhtoan) - res.giamgia
+                console.log("tongthanhtoan",tiengiamgia)
+
+                $('#tongthanhtoan').text(tiengiamgia.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+              }
+              else if(res.sotiengiam == null){
+                $('#check').text('Bạn được giảm '+res.sale + '%')
+                var sale = Number(res.sale)/100
+                var tongthanhtoan = $('#tongthanhtoan').text()
+                tongthanhtoan = tongthanhtoan.replace(/\./g, '')
+                //tong hang
+                var tongtienhang = $('#tong').text()
+                tongtienhang = tongtienhang.replace(/\./g, '')
+                console.log('iiiiiiiiiii', tongtienhang)
+
+                //sale 
+                var tiengiamgia = Number(tongtienhang)*sale
+                console.log("tongthanhtoan",tiengiamgia)
+                $('#tong').text(tiengiamgia.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+
+                var ship = $('#ship').text()
+                ship = ship.replace(/\./g, '')
+                // tong thanh toan 
+                var tongthanhtoan = tiengiamgia + Number(ship)
+                $('#tongthanhtoan').text(tongthanhtoan.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."))
+              }
+            }
+            else{
+              $('#check').text('không tìm thấy mã')
+            }
+          }
+        })
+      }
+
+      $(document).ready(function(){
+        //- function thanhtoan(){
+          $('#thongtin').submit(function(){
+            var ten = $.trim($('#nhapten').val())
+            var email = $.trim($('#nhapemail').val())
+            var phone = $.trim($('#nhapphone').val())
+            var address = $.trim($('#nhapaddress').val())
+            var kiemtra = true
+            console.log('ten', ten)
+            //check ten
+            if(ten == ''){
+              $('#error_ten').text('Vui lòng nhập họ tên')
+              $('#nhapten').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra = false
+            }
+            else{
+              $('#nhapten').text('')
+            }
+            //check email 
+            if(email == ''){
+              $('#error_email').text('Vui lòng nhập email')
+              $('#nhapemail').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra = false
+            }
+            else{
+              $('#nhapemail').text('')
+            }
+            //check phone
+            if(phone == ''){
+              $('#error_phone').text('Vui lòng nhập số điện thoại')
+              $('#nhapphone').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra == false
+            }
+            else{
+              $('#nhapphone').text('')
+            }
+            //check dia chi
+            if(address == ''){
+              $('#error_address').text('Vui lòng nhập địa chỉ')
+              $('#nhapaddress').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra == false
+            }
+            else{
+              $('#nhapaddress').text('')
+            }
+            return kiemtra
+          })
+        //- }
+      })
+
+      //thanhtoan 
+      function thanhtoan(){
+        var soluong = $('#add-to-cart').text()
+        var addressId = $('#addressId').val()
+        console.log('addressId', addressId)
+        //- console.log('soluogn', soluong)
+        $.ajax({
+          type : 'POST',
+          url: '/thanhtoan',
+          data : {
+            soluongdat : soluong,
+            addressId : addressId
+          },
+          success : function(res){
+            console.log(res)
+            alert('Bạn đặt hàng thành công')
+            window.location.replace("/gio-hang");
+            //- var kiemtra = true
+            //- if(addressId == ''){
+            //-   $('#error_diachi').text('Vui lòng chọn địa chỉ')
+            //-   kiemtra = false
+            //- }else{
+            //-   $('#addressId').text()
+            //- }
+
+            //- return kiemtra
+          }
+        })
+      }

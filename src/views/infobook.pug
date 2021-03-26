@@ -1,0 +1,118 @@
+extends ../views/layout/nav.pug
+
+block content
+  .card
+    .card-body
+      .row
+        .col-12.col-sm-6
+          .col-12
+            img.product-image(src='/uploads/'+infobook.image, alt='Product Image',style= "width:400px;height:400px")
+        .col-12.col-sm-6
+          h3.my-3 #{infobook.title}
+          h5 Tác giả : 
+            span #{infobook.author}
+
+          hr
+          - var abc = sale.sale.replace(/%/g, '')
+          - var ab = abc.replace(/-/g, '')
+          - var giam = Number(ab)/100
+          - var tong = Number(infobook.cost)
+          - var giamgia = Number(infobook.cost)*giam
+          .bg-gray.py-2.px-3.mt-4
+            h2.mb-0 
+              span(id = "giamgia"+infobook.id)  #{(tong - giamgia).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} 
+              span 
+                u đ
+              if(abc > 0 || abc < 0) 
+                span.salei 
+                  del  #{infobook.cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} 
+                    span 
+                      u đ
+                  span.salea #{sale.sale}
+
+          .mt-4
+            //- .btn.btn-default
+            //-   span 
+            //-     a(href = "/gio-hang")
+            //-       i.fas.fa-cart-plus.fa-lg.mr-2 Mua Ngay
+            .btn.btn-default.btn-lg.btn-flat(onclick = "addcart("+infobook.id+")")
+              i.fa.fa-shopping-cart.mr-2
+              |  Chọn mua
+      .row.mt-4
+        nav.w-100
+          #product-tab.nav.nav-tabs(role='tablist')
+            a#product-desc-tab.nav-item.nav-link(data-toggle='tab' href='#product-desc' role='tab' aria-controls='product-desc' aria-selected='false') Giới thiệu sản phẩm
+            //- a#product-comments-tab.nav-item.nav-link(data-toggle='tab' href='#product-comments' role='tab' aria-controls='product-comments' aria-selected='false') Bình luận
+        #nav-tabContent.tab-content.p-3
+          #product-desc.tab-pane.fade(role='tabpanel' aria-labelledby='product-desc-tab')
+            | #{infobook.description}
+        //- #nav-tabContent.tab-content.p-3
+        //-   #product-comments.tab-pane.fade(role='tabpanel' aria-labelledby='product-comments-tab')
+        //-     | ac
+        hr
+  .card
+    h4 Đánh giá sản phẩm
+    div
+      textarea.form-control.aria-label(style = "float : left; width : 80%;margin-left: 30px;margin-top: 10px;", id = 'bl')
+      button(style = 'float : right; width : 10%;padding-top: 10px;padding-bottom: 10px;margin: 10px', onclick = "gui()") Gửi
+
+  script.
+
+    //ADD CART
+    function addcart(id){
+      var name = 'gio1'
+      var soluongdat = 1;
+      //- var costship = 30000;
+      var giasale = $('#giamgia'+id).text()
+      console.log('giasale', giasale)
+
+      //lay gia tri gio hang 
+      var currentgiohang = 0;
+      var giohang = $('#add-to-cart').text()
+      console.log('giohang', giohang)
+      $.ajax({
+        type: 'POST',
+        url: '/addcart',
+        data: {
+          id : id,
+          name: name,
+          //- costship: costship,
+          soluongdat: soluongdat,
+          giasale: giasale
+        },
+        success: function(res){
+          console.log('res', res)
+          //- $("#myAlert").alert('strong Success! them gio hang thanh cong');
+          if(res = 'abc'){
+            //- alert('them vao gio thanh cong')
+            //- $('#themsoluong').text(soluongdat++)
+            if(giohang == null){
+              currentgiohang = currentgiohang +1;
+              $('#add-to-cart').text(currentgiohang)
+            }
+            else{
+              giohang = Number(giohang) +1
+              $('#add-to-cart').text(giohang)
+            }
+          }
+        }
+      })
+    }
+
+    function gui(){
+      //lay noi dung bình luận 
+      var a = $('#bl').val()
+      console.log('abcc', a)
+      $.ajax({
+        type : 'POST',
+        url : '/binhluan',
+        data : {
+          noidung : a
+        },
+        success : function (res){
+          console.log(res)
+        }
+      })
+    }
+
+

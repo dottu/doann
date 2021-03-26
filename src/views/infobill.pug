@@ -1,0 +1,84 @@
+extends ../views/layout/layout.pug
+
+block content
+  h2 Thông tin sản phẩm
+  if(infobook && infobook.length)
+    table.table.table-hover.text-nowrap
+      thead
+        tr
+          th Khách hàng
+          th Sản phẩm
+          th Mã sản phẩm
+          th Trạng thái
+          th Ngày đặt hàng
+          th Nơi vận chuyển
+          th Đơn giá
+          //- th Số lượng
+          th Thành tiền
+      tbody
+        each a in infobook
+          each b in a.book.sales
+            each c in a.user.addresses
+              tr 
+              td #{a.user.name}
+              td 
+                img(src="/uploads/"+a.book.image, alt="alt", style = "width : 15%")
+              td #{a.book.masp} x #{a.soluongdat}
+              td
+                if(a.status == 0)
+                    button.btn.btn-danger.glyphicon.glyphicon-edit(style = 'background : green',  onclick = 'trangthai('+a.id+', '+a.status+')', id = 'trangthai'+a.id) Chờ xử lý
+                else 
+                    button.btn.btn-danger.glyphicon.glyphicon-edit(style = 'background : grey',  onclick = 'trangthai('+a.id+', '+a.status+')', id = 'trangthai'+a.id) Hoàn thành
+              td #{a.book.createdAt}
+              td #{c.name}  -  #{a.user.phonenumber} - #{c.address}
+              td #{(a.book.cost - (a.book.cost * (Number(b.sale.replace(/%/g, ''))/100))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+              //- td #{b.BookUsers.soluongdat}
+              td #{((a.book.cost - (a.book.cost * (Number(b.sale.replace(/%/g, ''))/100)))* a.soluongdat).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+  script.
+    function trangthai(id,trangthaihientai){
+      //tim
+      console.log('-----0', id)
+      console.log('-----', trangthaihientai)
+      var status = 0
+      if(trangthaihientai == 1){
+        status
+      }else{
+        status = 1
+      }
+      $.ajax({
+        type : 'POST',
+        url : '/thaydoitt',
+        data :{
+          id: id,
+          status : status
+        },
+        success : function(res){
+          if(status == 0){
+            $('#trangthai'+id).text('Chờ xử lý')
+            $('#trangthai'+id).css('background','green')
+          }
+          else{
+            $('#trangthai'+id).text('Hoàn thành')
+            $('#trangthai'+id).css('background','grey')
+          }
+            $('#trangthai'+id).attr('onclick', 'trangthai('+id+', '+status+')')
+        }
+      })
+    }
+
+
+    //tim` kiem' Ajax 
+    $('#timkiem').on('keyup', function(){
+      var value = $('#timkiem').val()
+      $.ajax({
+        type : 'GET',
+        url : '/searchthongtinsp',
+        data : {
+          search : value
+        },
+        success : function(data){
+          console.log('data o day', data)
+          $('#mytable').html(data)
+        }
+      })
+    })

@@ -1,0 +1,51 @@
+each a in users
+    tr(id='xoa'+a.id)
+        td #{a.id}
+        td #{a.name}
+        td #{a.phonenumber}
+        td #{a.password}
+        td #{a.role}
+        td #{a.createdAt}
+        td #{a.updatedAt}
+        td 
+            button.btn.btn-danger(type='button' data-toggle='modal' data-target='#form'+a.id, style = "background: green;" )
+                span.glyphicon.glyphicon-edit
+                    |  Sửa
+            .modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true' id ='form'+a.id)
+                .modal-dialog.modal-dialog-centered(role='document')
+                    .modal-content
+                        .modal-header.border-bottom-0
+                            h5#exampleModalLabel.modal-title Sửa tài khoản
+                            button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                span(aria-hidden='true') &times;
+                        form(action="/edituser" method="POST", id ='edituser' )
+                            .modal-body                                  
+                                .form-group
+                                    label(for='id') ID 
+                                    input.form-control(type='text' ,name = 'id' value=a.id readonly)
+                                .form-group
+                                    label(for='name') Họ tên
+                                    input.form-control(type='text' ,name = 'name' value=a.name readonly)
+                                .form-group
+                                    label(for='phonenumber') Số điện thoại
+                                    input.form-control(type='text' , value=a.phonenumber, name = 'phonenumber' placeholder='Nhập mã sản phẩm', id = 'editphonenumber')
+                                    //- span.error(id = 'error_editphonenumber')
+                                .form-group
+                                    label(for="role") Vai trò
+                                    select.form-control(name="role") 
+                                        option(value="custom") custom
+                                        option(value="admin") admin
+                                //- .form-group
+                                //-   label(for='password') Mật khẩu
+                                //-   input.form-control(type='password',name = 'password' placeholder='Nhập Mật khẩu',id = 'password')
+                                //-   span.error(id= 'error_pass')
+                                //- .form-group
+                                //-   label(for='confirmpassword') Nhập lại mật khẩu
+                                //-   input.form-control(type='password',name = 'confirmpassword' placeholder='Nhập lại mật khẩu', id= 'confirmpass')
+                                //-   span.error(id = 'error_confirmpass')
+                            .modal-footer.border-top-0.d-flex.justify-content-center
+                                button.btn.btn-success(type='submit') Sửa tài khoản
+        td 
+            button.btn.btn-danger(type='button',onclick = "a("+a.id+")")
+                span.glyphicon.glyphicon-remove
+                    |  Xóa 

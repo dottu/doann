@@ -1,0 +1,36 @@
+extends ../views/layout/nav.pug
+
+block content
+    div
+        | Sắp xếp theo :
+        div.sort-a 
+                //- form(action="/giathap" method="get") 
+                //-   input(type="hidden" name="price")
+                a.sort-list(href="/gia?a=giathap") Giá thấp
+                a.sort-list(href="/gia?a=giacao") Giá cao
+    section.content
+        .card.card-solid
+            .card-body.pb-0
+                .row.d-flex.align-items-stretch
+                    if(book && book.length)
+                        each bk in book
+                            each sale in bk.sales
+                                .col-12.col-sm-6.col-md-4.d-flex.align-items-stretch
+                                    .card.bg-light.carta
+                                        a(href='/thong-tin-book/'+bk.id) 
+                                            img(src="/uploads/"+bk.image, style = "width : 350px; height : 200px")
+                                        br
+                                        .card-body.pt-0#title
+                                            .div
+                                                span #{bk.title}
+                                            .cost
+                                                b #{bk.cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
+                                            .sale  
+                                                p #{sale.sale}
+            .card-footer
+                nav(aria-label='Contacts Page Navigation')
+                    ul.pagination.justify-content-center.m-0
+                        - for(var i =1 ; i <= page; i++)
+                            li.page-item.active
+                                a.page-link(href="/gia?a=giacao&page="+i)
+                                    span #{i} 

@@ -1,0 +1,43 @@
+each a in view
+    each bk in a.books
+        each i in bk.sales
+            tr(id = 'xoasale'+a.id)
+                td #{bk.id}
+                td #{a.namecategory}
+                td 
+                    img(src="/uploads/"+bk.image, alt="", style = "width : 50px; height: 30px")
+                td #{bk.masp}
+                td #{bk.title}
+                //- td #{a.namecategory}
+                td #{bk.cost}
+                td #{i.sale}
+                //- td #{bk.createdAt}
+                //- td #{bk.updatedAt}
+                td 
+                    button.btn.btn-danger(type='button' data-toggle='modal' data-target='#form'+i.id, style = "background: green;" )
+                        span.glyphicon.glyphicon Sửa
+                    .modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true' id = 'form'+i.id)
+                        .modal-dialog.modal-dialog-centered(role='document')
+                            .modal-content
+                                .modal-header.border-bottom-0
+                                    h5#exampleModalLabel.modal-title Sửa tài khoản
+                                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                        span(aria-hidden='true') &times;
+                                form(action="/editsale" method="POST", id ='editsale' )
+                                    .modal-body                 
+                                        .form-group
+                                            label(for='id') Mã sản phẩm 
+                                            input.form-control(type='text' ,name = 'bookid' value=a.id readonly)                 
+                                        .form-group
+                                            label(for='id') Mã sản phẩm 
+                                            input.form-control(type='text' ,name = 'masp' value=a.masp readonly)
+                                        .form-group
+                                            label(for='sale') Sale
+                                            input.form-control(type='text' ,name = 'sale' value=i.sale , id ='editgiamgia')
+                                            span.error(id = 'error_editgiamgia')
+                                    .modal-footer.border-top-0.d-flex.justify-content-center
+                                        button.btn.btn-success(type='submit') Sửa sale
+                td 
+                    button.btn.btn-danger(type='button', onclick = "xoasale("+a.id+","+i.id+")")
+                        span.glyphicon.glyphicon-remove
+                        |  Xóa

@@ -1,0 +1,244 @@
+extends ../views/layout/layout.pug
+block content
+  section.content
+    .container-fluid
+      .row
+        .col-md-6
+          .card.card-primary
+            .card-header
+              h3.card-title Tạo tài khoản
+            form(action = '/sign-up', method = 'POST',id = "sign-up")
+              .card-body
+                .form-group
+                  label(for='name') Họ tên
+                  input.form-control(type='text',name = 'name' placeholder='Nhập Họ tên', id = "name")
+                  span.error(id = "error_name")
+                .form-group
+                  label(for='exampleInputPhonenumber') Số điện thoại
+                  input.form-control(type='phone-number',name = 'phonenumber' placeholder='Nhập Số điện thoại', id = "phonenumber")
+                  - if (messages.loi)
+                    .message.loi
+                      span.error= messages.loi
+                  span.error(id = "error_phonenumber")
+                .form-group
+                  label(for='exampleInputPassword1') Mật khẩu
+                  input.form-control(type='password',name = 'password' placeholder='Nhập Mật khẩu' id="pass")
+                  span.error(id = "error_password")
+                .form-group
+                  label(for='exampleInputConfrimPassword1') Nhập lại mật khẩu
+                  input.form-control(type='password',name = 'confirmpassword' placeholder='Nhập lại mật khẩu', id ="confirm")
+                  span.error(id = "error_confirm")
+              .card-footer
+                button.btn.btn-primary(type='submit') Tạo tài khoản
+        .col-md-8
+          .card.card-primary
+            if(users && users.length)
+              table.table.table-hover.card-primary
+                thead
+                tr
+                  th ID
+                  th Họ tên
+                  th Số điện thoại
+                  th Mật khẩu
+                  th Vai trò
+                  th Ngày tạo
+                  th Ngày sửa
+                  th 
+                  th
+                tbody(id = 'mytable')
+                  each a in users
+                    tr(id='xoa'+a.id)
+                      td #{a.id}
+                      td #{a.name}
+                      td #{a.phonenumber}
+                      td #{a.password}
+                      td #{a.role}
+                      td #{a.createdAt}
+                      td #{a.updatedAt}
+                      td 
+                        button.btn.btn-danger(type='button',data-toggle='modal' data-target='#form'+a.id, style = "background: green;" )
+                          span.glyphicon.glyphicon-edit
+                            |  Sửa
+                        .modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true' id ='form'+a.id)
+                          .modal-dialog.modal-dialog-centered(role='document')
+                            .modal-content
+                              .modal-header.border-bottom-0
+                                h5#exampleModalLabel.modal-title Sửa tài khoản
+                                button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                  span(aria-hidden='true') &times;
+                              form(action="/edituser" method="POST", id ='edituser' )
+                                .modal-body                                  
+                                  .form-group
+                                    label(for='id') ID 
+                                    input.form-control(type='text' ,name = 'id' value=a.id readonly)
+                                  .form-group
+                                    label(for='name') Họ tên
+                                    input.form-control(type='text' ,name = 'name' value=a.name readonly)
+                                  .form-group
+                                    label(for='phonenumber') Số điện thoại
+                                    input.form-control(type='text' , value=a.phonenumber, name = 'phonenumber' placeholder='Nhập mã sản phẩm', id = 'editphonenumber')
+                                    //- span.error(id = 'error_editphonenumber')
+                                  .form-group
+                                    label(for="role") Vai trò
+                                    select.form-control(name="role") 
+                                      option(value="custom") custom
+                                      option(value="admin") admin
+                                  //- .form-group
+                                  //-   label(for='password') Mật khẩu
+                                  //-   input.form-control(type='password',name = 'password', placeholder='Nhập Mật khẩu',id = 'password')
+                                  //-   span.error(id= 'error_pass')
+                                  //- .form-group
+                                  //-   label(for='confirmpassword') Nhập lại mật khẩu
+                                  //-   input.form-control(type='password',name = 'confirmpassword',placeholder='Nhập lại mật khẩu', id= 'confirmpass')
+                                  //-   span.error(id = 'error_confirmpass')
+                                .modal-footer.border-top-0.d-flex.justify-content-center
+                                  button.btn.btn-success(type='submit') Sửa tài khoản
+                      td 
+                        button.btn.btn-danger(type='button',onclick = "a("+a.id+")")
+                          span.glyphicon.glyphicon-remove
+                            |  Xóa 
+
+      script.
+        //DELETE
+        function a(id){
+          console.log(id)
+          var a = confirm('Bạn có chắc chắn muốn xóa')
+          if(a == true){
+            $.ajax({
+              type: 'GET',
+              url : '/deleteuser',
+              data: {
+                id: id
+              },
+              success: function(res){
+                console.log(res)
+                $("#xoa"+id).remove()
+              }
+            })
+          }else{
+            console.log("vaoday")
+          }
+        }
+
+        //Event Submit
+        console.log("$", $)
+        $(document).ready(function() {
+          $('#sign-up').submit(function(){
+            var name = $.trim($('#name').val())
+            var phone = $.trim($('#phonenumber').val())
+            var password = $.trim($('#pass').val())
+            var confirmpassword = $.trim($('#confirm').val())
+
+            var kiemtra = true
+            if(name == ""){
+              $('#error_name').text('Vui lòng nhập họ tên')
+              $('#name').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra = false
+            }
+            else{
+              $('#name').text('')
+            }
+            //check phone
+            if(phone == ""){
+              $('#error_phonenumber').text('Vui lòng nhập số điện thoại')
+              $('#phonenumber').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra = false
+            }
+            else{
+              $('#phonenumber').text('')
+            }
+            //check matkhau
+            if(password == ""){
+              $('#error_password').text('Vui lòng nhập mật khẩu')
+              $('#pass').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra = false
+            }
+            else{
+              if(password.length < 6  || password.length > 32){
+                $('#error_password').text('Bạn cần nhập mật khẩu từ 6 đến 32 ký tự')
+                $('#pass').css('border', '1px solid rgb(132, 53, 52)')
+                kiemtra = false
+              }
+              else{
+                $('#pass').text('')
+              }
+            }
+            //check confim
+            if(confirmpassword == ""){
+              $('#error_confirm').text('Vui lòng nhập lại mật khẩu')
+              $('#confirm').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra = false
+            }
+            else{
+              if(confirmpassword && confirmpassword != password){
+                $('#error_confirm').text('Mật khẩu nhập chưa chính xác')
+                $('#confirm').css('border', '1px solid rgb(132, 53, 52)')
+                kiemtra = false
+              }
+              else{
+                $('#confirm').text('')
+              }
+            }
+            return kiemtra
+          })
+        })
+
+        //- //Edit Users
+        $(document).ready(function(){
+          $('#edituser').submit(function(){
+            var password = $.trim($('#password').val())
+            var confirmpass = $.trim($('#confirmpass').val())
+
+            var kiemtra = true
+            //check password
+            if(password == ''){
+              $('#error_pass').text('Vui lòng nhập mật khẩu')
+              $('#password').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra = false
+            }
+            else {
+              if(password.length < 6 || password.length > 32){
+                $('#error_pass').text('Bạn cần nhập mật khẩu từ 6 đến 32 ký tự')
+                $('#password').css('border', '1px solid rgb(132, 53, 52)')
+                kiemtra = false
+              }
+              else{
+                $('#pass').text('')
+              }
+            }
+            //check confirmpassword
+            if(confirmpass == ""){
+              $('#error_confirmpass').text('Vui lòng nhập lại mật khẩu')
+              $('#confirmpass').css('border', '1px solid rgb(132, 53, 52)')
+              kiemtra = false
+            }
+            else{
+              //- $('#error_confirm').text('Mật khẩu nhập chưa chính xác')
+              if(confirmpass && confirmpass != password){
+                $('#error_confirmpass').text('Mật khẩu nhập chưa chính xác')
+                $('#confirmpass').css('border', '1px solid rgb(132, 53, 52)')
+                kiemtra = false
+              }
+              else{
+                $('#confirmpass').text('')
+              }
+            }
+            return kiemtra
+          })
+        })
+
+        //Search Ajax User
+        $('#timkiem').on('keyup', function(){
+          var value = $('#timkiem').val()
+          $.ajax({
+            type : 'GET',
+            url : '/searchuser',
+            data : {
+              search : value 
+            },
+            success : function(data){
+              console.log('dattaaa', data)
+              $('#mytable').html(data)
+            }
+          })
+        })

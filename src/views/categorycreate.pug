@@ -1,0 +1,174 @@
+extends ../views/layout/layout.pug
+block content
+    section.content
+        .container-fluid
+            .row
+                .col-md-6
+                    .card.card-primary
+                        .card-header
+                            h3.card-title Tạo thể loại
+                        form(action = '/create-category', method = 'POST', id = "createcategory")
+                            .card-body
+                                .form-group 
+                                    label Tên thể loại
+                                    input.form-control(type='text',name = 'namecategory' placeholder='Nhập thể loại', id="namecategory")
+                                    span.error(id='error_namecategory')
+                                    - if(messages.loi)
+                                        .message.loi
+                                            span.error= messages.loi
+                                .form-group 
+                                    label Url
+                                    input.form-control(type='text',name = 'slug' placeholder='Nhập url  ...', id="slug")
+                                    span.error(id='error_slug')
+                                    - if(messages.loi)
+                                        .message.loi
+                                            span.error= messages.loi
+                                .form-group 
+                                    label Slug
+                                    input.form-control(type='text',name = 'slug' placeholder='Nhập Slug ...', id="slug")
+                                    span.error(id='error_slug')
+                                    - if(messages.loi)
+                                        .message.loi
+                                            span.error= messages.loi
+                            .card-footer
+                                button.btn.btn-primary(type='submit') Tạo thể loại    
+                .col-md-6
+                    .card.card-primary
+                        if(infobook && infobook.length)
+                            table.table.table-hover
+                                thead
+                                    tr
+                                        th ID
+                                        th Thể loại
+                                        th Ngày tạo
+                                        th Ngày sửa
+                                        th
+                                        th
+                                tbody(id = 'mytable')
+                                    each a in infobook
+                                        tr(id = 'xoatl'+a.id)
+                                            td #{a.id}
+                                            td #{a.namecategory}
+                                            td #{a.createdAt}
+                                            td #{a.updatedAt}
+                                            td 
+                                                button.btn.btn-danger(type='button',data-toggle='modal' data-target='#form'+a.id, style = "background: green;" )
+                                                    span.glyphicon.glyphicon-edit
+                                                        |  Sửa
+                                                .modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true' id= 'form'+a.id)
+                                                    .modal-dialog.modal-dialog-centered(role='document')
+                                                        .modal-content
+                                                            .modal-header.border-bottom-0
+                                                                h5#exampleModalLabel.modal-title Sửa thể loại
+                                                                button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                                                    span(aria-hidden='true') &times;
+                                                            form(action="/editcategory" method="POST", id ='editcategory')
+                                                                .modal-body                                  
+                                                                    .form-group
+                                                                        label(for='idtheloai') ID thể loại
+                                                                        input.form-control(type='text' ,name = 'id' value=a.id readonly)
+                                                                    .form-group
+                                                                        label(for='namecategory') Thể loại
+                                                                        input.form-control(type='text' , value=a.namecategory, name = 'namecategory' placeholder='Nhập mã sản phẩm', id = 'editnamecategory')
+                                                                        span.error(id = 'error_editnamecategory')
+                                                                    .form-group
+                                                                        label(for='slug') Slug
+                                                                        input.form-control(type='text' , value=a.namecategory, name = 'slug' placeholder='Nhập slug', id = 'editslug')
+                                                                        span.error(id = 'error_editslug')
+                                                                .modal-footer.border-top-0.d-flex.justify-content-center
+                                                                    button.btn.btn-success(type='submit', ) Sửa thể loại
+                                            td 
+                                                button.btn.btn-danger(type='button', onclick= "xoatheloai("+a.id+")")
+                                                    span.glyphicon.glyphicon-remove
+                                                        |  Xóa
+                            .card-footer
+                                nav(aria-label='Contacts Page Navigation')
+                                    ul.pagination.justify-content-center.m-0
+                                        li.page-item.active 
+                                            a.page-link(href="/?page=1") 1
+
+
+
+
+    script.
+        //Create Category
+        console.log('$',$)
+        $(document).ready(function(){
+            $('#createcategory').submit(function(){
+                var namecategory = $('#namecategory').val()
+                var kiemtra = true
+
+                //check namecategory
+                if(namecategory == ''){
+                    $('#error_namecategory').text('Vui lòng nhập tên thể loại')
+                    $('#namecategory').css('border', '1px solid rgb(132, 53, 52)')
+                    kiemtra = false
+                }
+                else{
+                    $('#namecategory').text('')
+                }
+                return kiemtra
+            })
+        })
+        //- //Edit
+        $(document).ready(function(){
+            $('#editcategory').submit(function(){
+                var namecategory = $.trim($('#editnamecategory').val())
+                var kiemtra = true
+
+                //check namecategory
+                if(namecategory == ''){
+                    $('#error_editnamecategory').text('Vui lòng nhập tên thể loại')
+                    $('#editnamecategory').css('border', '1px solid rgb(132, 53, 52)')
+                    kiemtra = false
+                }
+                else{
+                    $('#editnamecategory').text('')
+                }
+                return kiemtra
+            })
+        })
+
+        //DELETE Category
+        function xoatheloai(id){
+            var a = confirm('Bạn có chắc chắn muốn xóa')
+            if(a == true){
+                $.ajax({
+                    type : "GET",
+                    url: '/deletecategory',
+                    data: {
+                        id : id
+                    },
+                    success: function(res){
+                        console.log(res)
+                        $('#xoatl'+id).remove()
+                    }
+                }) 
+            }else{
+                console.log('thoi')
+            }
+        }
+
+        //- //Search Ajax
+        $('#timkiem').on('keyup', function(){
+            var value = $('#timkiem').val()
+            $.ajax({
+                type : 'GET',
+                url : '/searchtheloai',
+                data :{
+                    search : value
+                },
+                success : function(data){
+                    $('#mytable').html(data);
+                    console.log('dataaaa', data.infobook)
+                    //- for(var i =0; i <= data.infobook.length ; i++){
+                    //-     //- console.log('abc', data[i].namecategory)
+                    //-     var a = data.infobook[i]
+                    //-     console.log('ab', a)
+                    //-     //- $('#mytable tr').text(data.infobook[i].namecategory)
+                    //- }
+                    //-     //- $('#mytable tr').text(data)
+                        //- $('#mytable tr').html(data.infobook)
+                }
+            })
+        })

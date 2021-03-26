@@ -1,0 +1,327 @@
+extends ../views/layout/layout.pug
+
+block content
+  section.content
+    .container-fluid
+      .row
+        .col-md-6
+          .card.card-primary
+            .card-header
+              h3.card-title Sale
+            form(action = '/create-sale', method = 'POST', id = 'createsale')
+              .card-body
+                .form-group 
+                  label Mã sản phẩm
+                  if(book && book.length)
+                    select.custom-select(name='bookId',id='masp')
+                      option(value="") Mã sản phẩm
+                        each ca in book
+                          option(value =ca.id) !{ca.masp}
+                    span.error(id = 'error_masp')
+                .form-group 
+                  label Sale
+                  input.form-control(type='text',name = 'sale' placeholder='Nhập Sale ... -100%,...', id = 'sale')
+                  span.error(id = 'error_sale')
+                //- .form-group 
+                //-     label Sale
+                //-     input.form-control(type='text',name = 'sale' placeholder='Enter Sale', id = 'sale')
+                //-     span(id = 'error_sale')
+              .card-footer
+                button.btn.btn-primary(type='submit') Tạo     
+        .col-md-8
+          .card.card-primary
+            if(view && view.length)
+              table.table.table-hover.card-primary
+                thead
+                  tr
+                    th ID
+                    th Thể loại
+                    th Mã sản phẩm
+                    th Sản phẩm
+                    th Tiêu đề
+                    th Giá tiền
+                    th Sale
+                    //- th Ngày tạo
+                    //- th Ngày sửa
+                    th
+                    th
+                tbody(id = 'mytable')
+                  each a in view
+                    each bk in a.books
+                      each i in bk.sales
+                        tr(id = 'xoasale'+a.id)
+                          td #{bk.id}
+                          td #{a.namecategory}
+                          td 
+                            img(src="/uploads/"+bk.image, alt="", style = "width : 50px; height: 30px")
+                          td #{bk.masp}
+                          td #{bk.title}
+                          //- td #{a.namecategory}
+                          td #{bk.cost}
+                          td #{i.sale}
+                          //- td #{bk.createdAt}
+                          //- td #{bk.updatedAt}
+                          td 
+                            button.btn.btn-danger(type='button',data-toggle='modal' data-target='#form'+i.id, style = "background: green;" )
+                              span.glyphicon.glyphicon Sửa
+                            .modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true' id = 'form'+i.id)
+                              .modal-dialog.modal-dialog-centered(role='document')
+                                .modal-content
+                                  .modal-header.border-bottom-0
+                                    h5#exampleModalLabel.modal-title Sửa tài khoản
+                                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                                      span(aria-hidden='true') &times;
+                                  form(action="/editsale" method="POST", id ='editsale' )
+                                    .modal-body                 
+                                      .form-group
+                                        label(for='id') Mã sản phẩm 
+                                        input.form-control(type='text' ,name = 'bookid' value=a.id readonly)                 
+                                      .form-group
+                                        label(for='id') Mã sản phẩm 
+                                        input.form-control(type='text' ,name = 'masp' value=a.masp readonly)
+                                      .form-group
+                                        label(for='sale') Sale
+                                        input.form-control(type='text' ,name = 'sale' value=i.sale , id ='editgiamgia')
+                                        span.error(id = 'error_editgiamgia')
+                                    .modal-footer.border-top-0.d-flex.justify-content-center
+                                      button.btn.btn-success(type='submit') Sửa sale
+                          td 
+                            button.btn.btn-danger(type='button', onclick = "xoasale("+a.id+","+i.id+")")
+                              span.glyphicon.glyphicon-remove
+                              |  Xóa
+        //- .col-md-6
+        //-   .card.card-primary
+        //-     .card-header
+        //-       h3.card-title Mã giảm giá
+        //-     form(action = '/create-magiamgia', method = 'POST', id = 'magiamgia')
+        //-       .card-body
+        //-         .form-group 
+        //-           label Mã giảm giá
+        //-           input.form-control(type='text',name = 'magiamgia' placeholder='Nhập Mã giảm giá', id = 'magg')
+        //-           span.error(id = 'error_magg')
+        //-         .form-group 
+        //-           label Số tiền giảm
+        //-           input.form-control(type='text',name = 'sotiengiam' placeholder='Nhập Số tiền giảm', id = 'sotieng')
+        //-           span.error(id = 'error_sotieng')
+        //-         .form-group 
+        //-           label Ngày bắt đầu
+        //-           input.form-control(type='datetime-local',name = 'ngaybatdau' placeholder='Nhập thời gian giảm giá (ngày)...', id = 'timesale')
+        //-           span.error(id = 'error_start')
+        //-         .form-group 
+        //-           label Ngày kết thúc
+        //-           input.form-control(type='datetime-local',name = 'ngayketthuc' placeholder='Nhập Số tiền giảm', id = 'sotieng')
+        //-           span.error(id = 'error_end')
+        //-       .card-footer
+        //-         button.btn.btn-primary(type='submit') Tạo   
+        //-   if(magiamgia && magiamgia.length > 0)
+        //-     table.table.table-hover.card-primary
+        //-       thead
+        //-       tr
+        //-         th ID
+        //-         th Mã giảm giá
+        //-         th Trạng thái
+        //-         th Số tiền giảm
+        //-         //- th Thời gian giảm giá
+        //-         th Ngày bắt đầu
+        //-         th Ngày bắt đầu
+        //-         th
+        //-         th
+        //-       tbody
+        //-         each ma in magiamgia
+        //-           tr(id = 'xoama'+ma.id)
+        //-             td #{ma.id}
+        //-             td #{ma.magiamgia}
+        //-             td #{ma.status}
+        //-             td #{ma.sotiengiam}
+        //-             //- td #{ma.timesale}
+        //-             td #{ma.ngaybatdau}
+        //-             td #{ma.ngayketthuc}
+        //-             td 
+        //-               button.btn.btn-danger(type='button',data-toggle='modal' data-target='#formm'+ma.id, style = "background: green;" )
+        //-                 span.glyphicon.glyphicon Sửa
+        //-               .modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true', id = 'formm'+ma.id)
+        //-                 .modal-dialog.modal-dialog-centered(role='document')
+        //-                   .modal-content
+        //-                     .modal-header.border-bottom-0
+        //-                       h5#exampleModalLabel.modal-title Sửa mã giảm giá
+        //-                       button.close(type='button' data-dismiss='modal' aria-label='Close')
+        //-                         span(aria-hidden='true') &times;
+        //-                     form(action="/editmagiamgia" ,method="POST", id ="editmagiamgia" )
+        //-                       .modal-body                 
+        //-                         .form-group
+        //-                           label(for='id') ID
+        //-                           input.form-control(type='text' ,name = 'id' value=ma.id readonly)                 
+        //-                         .form-group
+        //-                           label(for='magiamgia') Mã giảm giá
+        //-                           input.form-control(type='text' ,name = 'magiamgia', value=ma.magiamgia readonly)
+        //-                         .form-group
+        //-                           label(for='sotiengiam') Số tiền giảm
+        //-                           input.form-control(type='text' ,name = 'sotiengiam', value=ma.sotiengiam , id ='editsotiengiam')
+        //-                           span.error(id = 'error_editsotiengiam')
+        //-                         .form-group
+        //-                           label(for='timesale') Ngày bắt đầu
+        //-                           input.form-control(type='date' ,name = 'timesale', value=ma.sotiengiam , id ='edittimesale')
+        //-                           span.error(id = 'error_editstart')                                
+        //-                         .form-group 
+        //-                           label(for='sotiengiam') Ngày kết thúc
+        //-                           input.form-control(type='date' ,name = 'sotiengiam', value=ma.sotiengiam , id ='editend')
+        //-                           span.error(id = 'error_editend')
+        //-                       .modal-footer.border-top-0.d-flex.justify-content-center
+        //-                         button.btn.btn-success(type='submit') Sửa mã giảm giá
+        //-             td 
+        //-               button.btn.btn-danger(type='button', onclick= "xoamagiamgia("+ma.id+")")
+        //-                 span.glyphicon.glyphicon-remove
+        //-                   |  Xóa
+    script.
+
+      //CHECK SALE
+      $(document).ready(function(){
+        $('#createsale').submit(function(){
+          var masp = $.trim($('#masp').val())
+          var sale = $.trim($('#sale').val())
+
+          var kiemtra = true
+
+          //check masp
+          if(masp == ""){
+            $('#error_masp').text("Vui lòng chọn sản phẩm")
+            $('#masp').css('border', '1px solid rgb(132, 53, 52)')
+            kiemtra = false
+          }else{
+            $('#masp:selected').text('')
+          }
+          //check sale
+          //- if(sale == ""){
+          //-   $('#error_sale').text('Vui lòng nhập sale')
+          //-   $('#sale').css('border', '1px solid rgb(132, 53, 52)')
+          //-   kiemtra = false
+          //- }else{
+          //-   $('#sale').text('')
+          //- }
+          return kiemtra
+        })
+      })
+
+      //DELETE SALE
+      function xoasale(bookid, saleid){
+        var a = confirm('Bạn có chắc chắn muốn xóa')
+        if(a == true){
+          $.ajax({
+            type : "GET",
+            url: '/deletesale',
+            data: {
+              bookId : bookid,
+              saleId : saleid
+            },
+            success: function(res){
+              console.log(res)
+              $('#xoasale'+bookid).remove()
+            }
+          }) 
+        }else{
+          console.log('thoi')
+        }
+      }
+
+      //Search Sale Ajax
+      $('#timkiem').on('keyup', function(){
+        var value = $('#timkiem').val()
+        $.ajax({
+          type : 'GET',
+          url : '/searchsale',
+          data : {
+            search : value
+          },
+          success : function(data){
+            console.log('dattta', data)
+            $('#mytable').html(data)
+          }
+        })
+      })
+
+      //- //CHECK MAGIAMGIA
+      //- $(document).ready(function(){
+      //-   $('#magiamgia').submit(function(){
+      //-     var magiamgia = $.trim($('#magg').val())
+      //-     var sotiengiam = $.trim($('#sotieng').val())
+
+      //-     var kiemtra = true
+      //-     //check magiamgia
+      //-     if(magiamgia == ''){
+      //-       $('#error_magg').text('Vui lòng nhập mã giảm giá')
+      //-       $('#magg').css('border', '1px solid rgb(132, 53, 52)')
+      //-       kiemtra = false
+      //-     }else{
+      //-       $('#magg').text('')
+      //-     }
+      //-     //check sotiengiam
+      //-     if(sotiengiam == ''){
+      //-       $('#error_sotieng').text('Vui lòng nhập số giảm giá')
+      //-       $('#sotieng').css('border', '1px solid rgb(132, 53, 52)')
+      //-       kiemtra = false
+      //-     }else{
+      //-       $('#sotieng').text('')
+      //-     }
+      //-     return kiemtra
+      //-   })
+      //- })
+
+
+      //- //DELETE Magiamgia
+      //- function xoamagiamgia(id){
+      //-   var a = confirm('Bạn có chắc chắn muốn xóa')
+      //-   if(a == true){
+      //-     $.ajax({
+      //-       type : 'GET',
+      //-       url : '/deletemagiamgia',
+      //-       data: {
+      //-         id : id
+      //-       },
+      //-       success: function(res){
+      //-         $('#xoama'+id).remove()
+      //-       }
+      //-     })
+      //-   }else{
+      //-     console.log('vaoday')
+      //-   }
+      //- }
+
+      //Edit Sale 
+      //- $(document).ready(function(){
+      //-   $('#editsale').submit(function(){
+      //-     //- var sale = $.trim($('#editgiamgia').val())
+
+      //-     //- var kiemtra = true
+
+      //-     //- //check sale
+      //-     //- if(sale == ''){
+      //-     //-   $('#error_editgiamgia').text('Vui lòng nhập sale')
+      //-     //-   $('#editgiamgia').css('border', '1px solid rgb(132, 53, 52)')
+      //-     //-   kiemtra = false
+      //-     //- }
+      //-     //- else{
+      //-     //-   $('#editgiamgia').text('')
+      //-     //- }
+      //-     //- return kiemtra
+      //-   })
+      //- })
+
+      //- //Edit magiamgia
+      //- $(document).ready(function(){
+      //-   $('#editmagiamgia').submit(function(){
+      //-     var editsotiengiam = $.trim($('#editsotiengiam').val())
+      //-     var kiemtra = true
+
+      //-     //check sotiengiamgia 
+      //-     if(editsotiengiam == ''){
+      //-       $('#error_editsotiengiam').text('Vui lòng nhập số giảm giá')
+      //-       $('#editsotiengiam').css('border', '1px solid rgb(132, 53, 52)')
+      //-       kiemtra = false
+      //-     }
+      //-     else{
+      //-       $('#editsotiengiam').text('')
+      //-     }
+      //-     return kiemtra
+      //-   })
+      //- })
+
