@@ -77,13 +77,18 @@ const getBook = async (keySearch=false, pageBook =1,data) =>{
                 // }
             // }
         },
-        include : {
+        include : [
+            {
             model: db.sales,
             requied : true,
             // include : {
             //     model : db.sales
             // }
-        },
+            },
+            {
+                model : db.warehouses
+            }
+        ],
         limit: BOOK_LIMIT,
         offset: offsets,
         order: [
@@ -125,10 +130,10 @@ const searchbook = async (data,pageBook =1) =>{
 
     const search =  await db.books.findAndCountAll({
         attributes: ['id','loaibookId','image', 'title', 'status', 'author','cost' ,'createdAt', 'updatedAt'],
-        // include : {
-        //     model: db.sales,
-        //     requied : true
-        // },
+        include : {
+            model: db.sales,
+            requied : true
+        },
         where :{
             [Op.or] :{
                 [Op.and]:{

@@ -56,7 +56,10 @@ module.exports = (sequelize, DataTypes) => {
     // users.belongsToMany(models.books, {through : 'BookUsers', foreignKey: 'userId', sourceKey: 'id', as: 'BookUsersx'})
     users.belongsToMany(models.books, {through : 'book_users', foreignKey: 'userId', sourceKey : 'id'})
     users.belongsToMany(models.addresses, {through : 'useraddresses'})
+    users.belongsToMany(models.books, {through :'comment_books', foreignKey : 'userId', otherKey : 'bookId',as :'abcc'})
     users.hasMany(models.book_users, {foreignKey : 'userId'})
+    users.hasMany(models.comment_books, {foreignKey : 'userId',as :'commentuser'})
+    users.hasMany(models.useraddresses, { foreignKey : 'userId' , as : 'add'})
   };
   return users;
 };

@@ -5,7 +5,6 @@ block stylesheet
   link(href='/css/style.css' rel='stylesheet')
   link(href='/css/error.css' rel='stylesheet')
 block content
-
     .row
       if(cart.length === 0)
         div.empty
@@ -53,7 +52,7 @@ block content
               each add in address
                 each il in add.addresses
                   div
-                    input(type="radio", name="" ,value=add.id, id = 'addressId')
+                    input(type="radio", name="" ,value=il.id, id = 'addressId')
                     span(style ="padding : 0 20px") #{add.name}  -  #{add.phonenumber}   -   #{il.address}
                     span#error_diachi.error
             h2 Thông tin giao hàng 
@@ -111,7 +110,7 @@ block content
                 tbody
                   tr(id = 'id'+cart[a].bookcarts[i].id)
                     td.col-sm-8.col-md-6 
-                      .media
+                      div
                         a.thumbnail.pull-left(href='#')
                           img.media-object(src='/uploads/'+cart[a].image, style='width: 72px; height: 72px;')
                         .media-body
@@ -273,13 +272,13 @@ block content
         }
         else if (a <= 0 || a < 0){
           b = a +1
-          console.log("b",b)
+          console.log("bbb",b)
         }
         console.log('a',a)
-        console.log("b",b)
+        console.log("bb",b)
         $.ajax({
           type: 'POST',
-          url : '/tangsoluong',
+          url : '/giamsoluong',
           data :{
             id : bookcartid,
             bookId : bookid,

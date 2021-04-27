@@ -1,0 +1,61 @@
+extends ../views/layout/layout.pug
+
+block content
+  h5 Trạng thái chờ xét duyệt
+  table.table.table-hover.text-nowrap
+    thead
+        tr
+            th Mã sản phẩm
+            th Hình ảnh
+            th Tên khách bình luận 
+            th Nội dung bình luận
+            th Ngày bình luận
+            th Trạng thái
+    tbody
+      each cm in comment
+                tr
+                    td #{cm.masp}
+                    td 
+                        img(src="/uploads/"+cm.image, alt="alt", style = "width : 15%")
+                    td #{cm.nameuser}
+                    td #{cm.noidung}
+                    td #{cm.ngaycomment}
+                    td
+                        if(cm.status == 0)
+                            button.btn.btn-danger.glyphicon.glyphicon-edit(style = 'background : green',  onclick = 'trangthai('+cm.id+', '+cm.status+')', id = 'trangthai'+cm.id) Chờ phê duyệt
+                        //- else 
+                        //-     button.btn.btn-danger.glyphicon.glyphicon-edit(style = 'background : grey',  onclick = 'trangthai('+bl.id+', '+bl.status+')', id = 'trangthai'+bl.id) Hoàn thành
+
+    script.
+        function trangthai(id, trangthaihientai){
+            console.log('====',id)
+            console.log('--', trangthaihientai)
+            var status = 0;
+            if(trangthaihientai == 0){
+                status =1
+            }
+            //- else{
+            //-     status
+            //- }
+            $.ajax({
+                type : 'POST',
+                url : '/thaydoittbl',
+                data : {
+                    id : id,
+                    status : status
+                },
+                success : function(res){
+                    console.log(res)
+                    if(trangthaihientai == 0){
+                        $('#trangthai'+id).text('Hoàn thành')
+                        $('#trangthai'+id).css('background','grey')
+                    }
+                    //- else{
+                    //-     $('#trangthai'+id).text('Hoàn thành')
+                    //-     $('#trangthai'+id).css('background','grey')
+                    //- }
+                    $('#trangthai'+id).attr('onclick', 'trangthai('+id+', '+status+')')
+                }
+            })
+        }
+

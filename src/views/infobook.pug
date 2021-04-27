@@ -51,11 +51,29 @@ block content
         //-     | ac
         hr
   .card
-    h4 Đánh giá sản phẩm
+    h2(style = "font-size: 18px; margin-left : 10px ") ĐÁNH GIÁ SẢN PHẨM
     div
       textarea.form-control.aria-label(style = "float : left; width : 80%;margin-left: 30px;margin-top: 10px;", id = 'bl')
       button(style = 'float : right; width : 10%;padding-top: 10px;padding-bottom: 10px;margin: 10px', onclick = "gui()") Gửi
-
+    div(id = 'acbb')
+      span(id='error_comment', style = 'margin-left : 30px')
+    each cm in comment 
+      each usercm in cm.users
+        each cmus in usercm.commentuser
+            div(id = 'abcc')
+              h4(style = "width : 10%; float : left;color : blue; margin-left : 10px") #{usercm.name} : 
+              h4(style = "width : 88%; float : right") #{cmus.noidung} 
+              button.comment(style = "background : white; margin-left : 10px",onclick = 'like('+cmus.id+', '+cmus.luotthich+')', id = "like"+cmus.id )
+                i.glyphicon.glyphicon-thumbs-up
+                  //- if(like.luotthich > 0)
+                  //-   - var sumlike = 0
+                  //-   - for(var i =0 ; i <cmus.likes.length; i++)
+                  //-       - var sumlike = sumlike + Number(cmus.likes[i].luotthich)
+                  //-   span Lượt thích(#{sumlike})
+                  //- else
+                  span(id='asclike'+cmus.id) Lượt thích(#{cmus.luotthich})
+              br
+              hr
   script.
 
     //ADD CART
@@ -101,6 +119,10 @@ block content
 
     function gui(){
       //lay noi dung bình luận 
+      //- $("#acbb").hide();
+      if($('#bl').val() == ''){
+        return $("#error_comment").html('Có lỗi xảy ra, vui lòng gửi lại').css('color', 'rgb(132, 53, 52)')
+      }
       var a = $('#bl').val()
       console.log('abcc', a)
       $.ajax({
@@ -111,6 +133,45 @@ block content
         },
         success : function (res){
           console.log(res)
+          //- //- $('#abcc').append(res)
+          $('#bl').val('')
+          alert('bình luận chờ xét duyệt')
+          //- window.setTimeout(function() {
+          //-   $("#acbb").fadeTo(500, 0).slideUp(500, function(){
+          //-   $(this).remove(); 
+          //-   });
+          //- }, 2000);
+          //- settimeOut
+        }
+      })
+    }
+
+    function like(id, currentlike){
+      console.log('---', id)
+      //check lượt thích 
+      console.log(typeof currentlike)
+      //- let uId = userId
+      var sumlike = currentlike +1
+      //- console.log('+-+++++', sumlike)
+      //- //tồn tại user đã like
+      //- if(userId && currentlike == 0){
+      //-   //- uId
+      //-   sumlike = sumlike +1
+      //- }else{
+      //-   sumlike = sumlike +1
+      //- }
+      $.ajax({
+        type : 'POST',
+        url : '/like',
+        data : {
+          id : id,
+          //- userId: uId,
+          luotthich : sumlike,
+        },
+        success : function(res){
+          console.log('=====', res)
+          $('#like'+id).attr('onclick', 'like('+id+','+sumlike+')')
+          $('#asclike'+id).html('Lượt thích('+sumlike+')')
         }
       })
     }
