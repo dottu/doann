@@ -1,28 +1,21 @@
 'use strict';
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('comment_books', {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('likes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      noidung: {
-        type: Sequelize.STRING
-      },
-      luotthich: {
-        type: Sequelize.INTEGER
-      },
-      bookId: {
+      commnetId: {
         type: Sequelize.INTEGER
       },
       userId: {
         type: Sequelize.INTEGER
       },
-      status: {
-        type: Sequelize.ENUM("1", "0"),
-        defaultValue: '0'
+      luotthich: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -34,7 +27,7 @@ module.exports = {
       }
     });
   },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('comment_books');
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('likes');
   }
 };

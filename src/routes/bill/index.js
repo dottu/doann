@@ -103,7 +103,7 @@ router.get('/gio-hang',checkgiohang, catchHandle(async(req,res)=>{
                 id : req.session.userId
             }
         })
-        // return res.send(address)
+        console.log('==========', address)
         const getdanhmuc = await db.loaibooks.findAll({})
         console.log('asd',address)
         // res.send(address)
@@ -170,6 +170,7 @@ router.get('/gio-hang',checkgiohang, catchHandle(async(req,res)=>{
     // const infoShip = await billServices.getShip()
     // const indobookcart = await billServices.getDistinct()
     // res.send({address:infoAdd, cart:infoCart,checkma:checkma})
+
 }))
 
 
@@ -207,6 +208,26 @@ router.get('/checkout', catchHandle( async( req,res)=>{
     const infoShip = await billServices.getShip()
     // const bookCartsShip = await billServices.getShipbookcart()
     res.render('bill',{address:infoAdd, cart:infoCart, ship:infoShip})
+}))
+
+router.post('/giamsoluong', catchHandle(async(req, res)=> {
+    console.log('-----cart ', req.body)
+    const getsoluongton = await db.warehouses.findOne({
+        attributes : ['soluongton'],
+        where : {
+            bookId : req.body.bookId
+        }
+    })
+    let soluongsaukhigiam = Number(getsoluongton.soluongton +1)
+    console.log(' ++++++', soluongsaukhigiam)
+    var obj = {
+        bookId : req.body.bookId,
+        soluongton : soluongsaukhigiam
+    }
+    console.log('o day na ', obj)
+    const resUp = await cartServices.upsoluongdat(req.body)
+    const resUpwarehouse = await bookServices.upsoluongton(obj)
+    res.send(eResponse._success(resUp))
 }))
 
 //DELETE Products
@@ -519,7 +540,10 @@ router.get('/thongtinsp', catchHandle(async(req,res)=>{
                 model : db.users,
                 include : [
                     {
-                        model : db.addresses
+                        // model : db.useraddresses,
+                        // as : 'add',
+                            model : db.addresses
+
                     }
                 ]
             }
@@ -544,7 +568,12 @@ router.get('/thongtinsp', catchHandle(async(req,res)=>{
     //     ]
     // })
 // 
-    // return res.send({infobook:thongtinsp})
+
+    // var listbill = []
+    // var objbill
+    // //duyệt mảng 
+    // for(var i =0 ; i < )
+    // return res.send({infobook:thongtinsp})  
     res.render('infobill',{infobook: thongtinsp})
 }))
 

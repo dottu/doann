@@ -12,6 +12,7 @@ import { Op } from 'sequelize'
 import alert from 'alert'; 
 import multer from 'multer'
 import path from 'path'
+import { get } from '../../cache'
 // import flash from 'express-flash'
 
 const router = express.Router()
@@ -269,6 +270,7 @@ router.get('/',catchHandle(async(req,res)=>{
     // const abc = await bookServices.searchbook(req.query.search)
     // console.log('ahasd', {abc:home})
         //Search products 
+    // return res.send(home)
     console.log(home.count)
     var c = home.count -1
     var a = Number(home.current)
@@ -393,32 +395,54 @@ router.get('/thong-tin-book/:bookid', catchHandle( async (req,res)=>{
     const getinfo = await bookServices.getinfobook(req.params.bookid)
     const getsluong = await db.bookcarts.findAll({
     })
-    // var tongsoluong = 0
-    // if(getsluong){
-    //     for( var i = 0; i < getsluong.length; i++){
-    //         tongsoluong = tongsoluong + getsluong[i].soluongdat
+    const listcomment = await db.books.findAll({
+        include: [
+            {
+                model : db.users,
+                include : [
+                    {
+                        model : db.comment_books,
+                        as : 'commentuser',
+                        where : {
+                            status : 1,
+                            bookId : req.params.bookid
+                        },
+                        // include : [
+                        //     {
+                        //         model: db.likes,
+                        //         requied : true,
+                        //         group : ['commentId'],
+                        //     }
+                        // ],
+                    }
+                ]
+            },
+            {
+                model : db.warehouses
+            }
+        ],
+        where :{
+            id : req.params.bookid
+        }
+    })
+    //lấy số lượng tồn 
+    // var soluong
+    // for(var i=0; i < listcomment.length; i++ ){
+    //     for( var j =0; j < listcomment[i].warehouses.length; j++){
+    //         if(listcomment[i].warehouses[j].soluongton == 0){
+    //             soluong = listcomment[i].warehouses[j].soluongton
+    //         }
     //     }
     // }
-    // console.log('vao tong soluong', tongsoluong)
-    // console.log('vao day nha', req.session)
+
+    // console.log()
+    // return res.send(listcomment)
     if(!req.session.userId && !req.session.cartId){
             var getsumcart = 0
-        // //lay bookcart
-        // const laykhohang = await db.bookcarts.findAll({
-        //     where : {
-        //         cartId : req.session.cartId
-        //     }
-        // })
-        // if(laykhohang == null ){
-        //     var getsumcart = 0
-        //     const getdanhmuc = await db.loaibooks.findAll({})
-        //     res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc})
-
-        // }
         var tenngdung = 'Tài khoản'
         // else{
             const getdanhmuc = await db.loaibooks.findAll({})
-            res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc, ten: tenngdung})
+            res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc, ten: tenngdung, comment : listcomment})
         // }
 
     }
@@ -432,7 +456,7 @@ router.get('/thong-tin-book/:bookid', catchHandle( async (req,res)=>{
             })
             var tenngdung = req.session.name
             const getdanhmuc = await db.loaibooks.findAll({})
-            res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc, ten : tenngdung})
+            res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc, ten : tenngdung, comment : listcomment})
         }
         else{
             if(req.session.userId && !req.session.cartId){
@@ -445,7 +469,7 @@ router.get('/thong-tin-book/:bookid', catchHandle( async (req,res)=>{
                 })
                 var tenngdung = req.session.name
                 const getdanhmuc = await db.loaibooks.findAll({})
-                res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc, ten:tenngdung})
+                res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc, ten:tenngdung, comment : listcomment})
             }else{
                 console.log('......................vaoday else 1...')
                 const getsumcart = await db.bookcarts.findAll({
@@ -456,7 +480,7 @@ router.get('/thong-tin-book/:bookid', catchHandle( async (req,res)=>{
                 })
                 const getdanhmuc = await db.loaibooks.findAll({})
                 var tenngdung = req.session.name
-                res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc, ten: tenngdung})
+                res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc, ten: tenngdung, comment : listcomment})
             }
             // console.log('......................vaoday else 1...')
             // const getsumcart = await db.bookcarts.findAll({
@@ -469,25 +493,13 @@ router.get('/thong-tin-book/:bookid', catchHandle( async (req,res)=>{
             // res.render('infobook',{infobook:getinfo,sale : getsale,soluonggio: getsumcart,danhmuc : getdanhmuc})
         }
     }
-    // var tong = 0
-    // if(getsumcart == null){
-    //     tong = tong
-    // }
-    // else{
-    //     getsumcart.forEach(element => {
-    //         console.log('Tongsoluong', element.soluongdat)
-    //         tong = tong + element.soluongdat
-    //     });
-    // }
-    // setTimeout(() => {
-        // console.log('tong0',tong)
 
-    // }, 1000);
-    // res.send({sale:getsale.sale})
 }))
 
 
 ///BÌNH Luân SẢN PHẨM 
+
+
 router.post('/binhluan', catchHandle(async(req,res)=>{
     console.log('======', req.body)
     console.log('++++++', req.params)
@@ -502,8 +514,54 @@ router.post('/binhluan', catchHandle(async(req,res)=>{
     }
 
     const incm = await bookServices.comment(objcomment)
-    res.send('oce')
+    // const list = await db.comment_books.findAll({
+    //     where :{
+    //         [Op.and]:{
+    //             bookId : req.session.bookid,
+    //             userId : req.session.userId
+    //         }
+    //     }
+    // })
+    // const abcc = await db.books.findAll({
+    //     include : [
+    //         {
+    //             model :db.users,
+    //             attributes : ['id','name'],
+    //             include :[
+    //                 {
+    //                     model: db.comment_books,
+    //                     as : 'commentuser',
+    //                     where : {
+    //                         status : 1
+    //                     }
+    //                 }
+    //             ] 
+    //         },
+    //     ],
+    //     where : {
+    //         id : req.session.bookid
+    //     }
+    // })
+    
+
+    //Lấy id vừa tạo trong comment_books
+
+    // const getdesccm_book = await db.comment_books.findOne({
+    //     order :[
+    //         ['id', 'desc']
+    //     ], limit :1
+    // })
+    // //
+    // var objlike  = {
+    //     commentId : getdesccm_book.id,
+    //     userId : req.session.userId,
+    //     luotthich : 0
+    // }
+    // const crlike = await db.likes.create(objlike)
+    res.send('Oce')
 }))
+
+
 
 
 //Search 
@@ -552,29 +610,9 @@ router.get('/gia', catchHandle(async(req,res)=>{
 //     // console.log(primeArray())
 // }))
 
-
-// loc. the? loai. tim kiem'
-// router.get('/truyentranh', catchHandle (async (req, res)=>{
-//     //lay the loai truyen tranh 
-//     // let offsets = 
-//     const getdanhmuc = await bookServices.listdanhmuc(req.query.page)
-
-//     // var page = Math.ceil(gettruyentranh.count/)
-//     // console.log('abc',gettruyentranh)
-//     // res.send(getdanhmuc)
-//     // res.send({abc :gettruyentranh.count,comic : gettruyentranh.rows})
-//     res.render('comic', {comic : getdanhmuc.rows,page: getdanhmuc.page, current : getdanhmuc.current })
-// }))
-
-// router.get('/tamly', catchHandle (async (req,res) =>{
-//     console.log('query',req.query)
-//     console.log('body', req.params)
-//     const getdanhmuc = await bookServices.listmentality(req.query.page)
-//     // res.send({comic : getdanhmuc.rows,page: getdanhmuc.page, current : getdanhmuc.current })
-//     res.render('mentality', {comic : getdanhmuc.rows,page: getdanhmuc.page, current : getdanhmuc.current })
-// }))
-router.get('/danh-muc/:slug', catchHandle(async(req,res) =>{
+router.get('/danhmuc/:slug', catchHandle(async(req,res) =>{
     //lay slug 
+    console.log(req.query)
     console.log(req.params)
     const listtheloai = await loaibookServices.getSlug(req.params.slug,req.query.page)
     const listdanhmuc = await db.loaibooks.findOne({
@@ -627,26 +665,86 @@ router.get('/test', catchHandle(async(req,res)=>{
     // }
     // console.log('aaaaaa',ush)
     // res.send('of')
-    const abc = await db.books.findAll({
+    // const abc = await db.books.findAll({
+    //     include : [
+    //         {
+    //             model : db.users,
+    //             // attributes : ['id', 'bookId', 'userId','status' ,'soluongdat'],
+    //             include : [
+    //                 {
+    //                     model : db.comment_books,
+    //                     required : true,
+                        
+    //                 },
+    //                 // {
+    //                 //     model : db.addresses,
+    //                 //     require: true
+    //                 // }
+    //             ]
+    //         },
+    //         {
+    //             model : db.sales
+    //         }
+    //     ]
+    // })
+    // let a = []
+    // const abc = await db.users.findAll({
+    //     include : {
+    //         model : db.comment_books
+    //     },
+    //     where : {
+    //         role : 'custom'
+    //     }
+    // })
+    // const ab = await db.books.findAll({
+    //     include : {
+    //         model : db.users,
+    //         where : {
+    //             role : 'custom'
+    //         }
+    //     }
+    // })
+    // let listuserbook = []
+    // for (let index = 0; index <=ab.length; index++) {
+    //         console.log('------a-',ab[index])
+    //     for (let q = 0;q < ab[index].users.length; q++) {
+    //         listuserbook.push([q])
+    //     }
+    // }
+    // ab =JSON.parse(JSON.stringify(ab))
+    // console.log('--------------0', ab)
+    // ab.forEach(element => {
+    //   console.log('===â', element.books)  
+    // });
+    // console.log('=====', listuserbook)
+
+    // for(i = 0 ; i <= abc.length;i++){
+    //     for(j=0; j <= ab.length; j++){
+    //         if()
+    //     }
+    // }
+    const abcc = await db.books.findAll({
         include : [
             {
-                model : db.users,
-                // attributes : ['id', 'bookId', 'userId','status' ,'soluongdat'],
-                include : [
-                    // {
-                    //     model : db.book_users,
-                    // },
+                model :db.users,
+                attributes : ['id','name'],
+                include :[
                     {
-                        model : db.addresses
+                        model: db.comment_books,
+                        as : 'commentuser',
+                        where : {
+                            status : '1'
+                        }
                     }
-                ]
+                ] 
             },
-            {
-                model : db.sales
-            }
-        ]
+            // {
+            //     model : db.comment_books,
+            //     as : 'commentbook'
+            // }
+        ],
     })
-    return res.send(abc)
+    return res.send({comment :abcc})
 }))
 
 

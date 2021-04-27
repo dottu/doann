@@ -1,9 +1,5 @@
 'use strict';
 
-// const book = require("./book");
-
-// import users from '../models/user'
-// import books from '../models/book'
 module.exports = (sequelize, DataTypes) => {
   const book_users = sequelize.define('book_users', {
     bookId: {

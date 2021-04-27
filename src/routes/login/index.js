@@ -158,5 +158,9 @@ router.get('/searchuser', catchHandle(async(req,res)=>{
 }))
 
 
+router.get('/socketio', catchHandle(async(req,res) =>{
+    res.render('socketio/indexsocket')
+}))
+
 
 export default router

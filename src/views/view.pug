@@ -33,31 +33,35 @@ block content
           if(book && book.length)
             each bk in book
               each sale in bk.sales
-                .col-12.col-sm-6.col-md-4.d-flex.align-items-stretch
-                  .card.bg-light.carta
-                    if(bk.status == '1')
+                each ware in bk.warehouses
+                  .col-12.col-sm-6.col-md-4.d-flex.align-items-stretch
+                    .card.bg-light.carta
+                      div
+                        if(ware.soluongton == 0 || ware.soluongton < 0)
+                          image(src='/uploads/sold_out.webp', style = 'width : 100%')
                       a(href='/thong-tin-book/'+bk.id) 
-                        img(src="/uploads/"+bk.image, style = "width : 350px; height : 200px")
-                      br
-                      .card-body.pt-0#title
-                        .div
-                          span #{bk.title}
-                        .cost
-                          - var abc = sale.sale.replace(/%/g, '')
-                          - var giam = Number(abc)/100
-                          del #{bk.cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
-                          br 
-                          b #{(bk.cost - (bk.cost * giam)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
-                        .sale  
-                          p #{sale.sale}
-                    //- .text-right
-                    //-     a.btn.btn-sm.bg-teal(href='#')
-                    //-         i.fas.fa-comments Mua hang
-                    //-     a.btn.btn-sm.btn-primary(href='#')
-                    //-         i.fas.fa-user
-                    //-         |  Them gio hang
+                        img(src="/uploads/"+bk.image, style = "width : 100%")
+                        br
+                      .card-body#title
+                          .div
+                            span #{bk.title}
+                          .cost
+                            - var abc = sale.sale.replace(/%/g, '')
+                            - var giam = Number(abc)/100
+                            del #{bk.cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
+                            br 
+                            b #{(bk.cost - (bk.cost * giam)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
+                          .sale  
+                            p #{sale.sale}
+                      //- .text-right
+                      //-     a.btn.btn-sm.bg-teal(href='#')
+                      //-         i.fas.fa-comments Mua hang
+                      //-     a.btn.btn-sm.btn-primary(href='#')
+                      //-         i.fas.fa-user
+                      //-         |  Them gio hang
+        
       .card-footer
-        nav(aria-label='Contacts Page Navigation')
+        nav(aria-label='Contacts Page Navigation',style = 'text-align : center')
           ul.pagination.justify-content-center.m-0
             li.page-item.active
               - var back = a - 1

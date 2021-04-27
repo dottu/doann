@@ -67,11 +67,12 @@ module.exports = (sequelize, DataTypes) => {
     // books.hasMany(models.BookUsers, {foreignKey : 'bookId', sourceKey: 'id', as: 'haha'})
     // books.hasMany(models.BookUsers, {foreignKey : 'bookId'})
     books.belongsToMany(models.users, {through : 'book_users', sourceKey : 'id'})
+    books.belongsToMany(models.users, {through : 'comment_books', foreignKey : 'bookId', otherKey : 'userId'})
     // books.hasMany(models.book_users, {foreignKey : 'bookId'})
 
     // books.belongsToMany(models.users, {through : "comment_books", foreignKey:'bookId'})
     // books.belongsToMany(models.users, {through : "danhgia_books", foreignKey: 'bookId'})
-    // books.hasMany(models.BookUsers, {foreignKey : 'bookId', sourceKey: 'id'})
+    books.hasMany(models.comment_books, {foreignKey : 'bookId',as :'commentbook'})
 
   };
   return books;

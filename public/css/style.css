@@ -331,3 +331,13 @@ img.slide:not(:first-child) {
 #prev {
     left: 10px;
 }
+
+/* css comment */
+.comment {
+    border: 1px solid rgb(13, 92, 182);
+    border-radius: 4px;
+    padding: 8px 16px 9px;
+    color :rgb(13, 92, 182)
+}
+
+

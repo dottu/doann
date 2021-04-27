@@ -18,7 +18,7 @@ block content
                                 .col-12.col-sm-6.col-md-4.d-flex.align-items-stretch
                                     .card.bg-light.carta
                                         a(href='/thong-tin-book/'+bk.id) 
-                                            img(src="/uploads/"+bk.image, style = "width : 350px; height : 200px")
+                                            img(src="/uploads/"+bk.image, style = "width : 100%")
                                         br
                                         .card-body.pt-0#title
                                             .div
@@ -28,7 +28,7 @@ block content
                                             .sale  
                                                 p #{sale.sale}
             .card-footer
-                nav(aria-label='Contacts Page Navigation')
+                nav(aria-label='Contacts Page Navigation', style = 'text-align: center')
                     ul.pagination.justify-content-center.m-0
                         - for(var i =1 ; i <= page; i++)
                             li.page-item.active
