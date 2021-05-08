@@ -527,7 +527,7 @@ router.get('/thongtinsp', catchHandle(async(req,res)=>{
     // }
 
     const thongtinsp = await db.book_users.findAll({
-        attributes : ['id','bookId','userId','soluongdat','status'],
+//         attributes : ['id','bookId','userId','soluongdat','status'],
         include: [
             {
                 model: db.books,
