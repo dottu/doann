@@ -15,7 +15,7 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-//     await queryInterface.bulkInsert('books', data(time), {});
+
   },
 
   down: (queryInterface, Sequelize) => {
@@ -25,7 +25,6 @@ module.exports = {
 
       Example:
       return queryInterface.bulkDelete('People', null, {});
-    */
-//    return await queryInterface.bulkDelete('books', null, {});
+
   }
 };
