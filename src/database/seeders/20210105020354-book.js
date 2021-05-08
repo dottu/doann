@@ -15,10 +15,6 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-   const time = Sequelize.literal('CURRENT_TIMESTMP()');
-   if(!ENABLE_TEMPLATE_FULL || !data(time).length){
-     return;
-   }
     await queryInterface.bulkInsert('books', data(time), {});
   },
 
