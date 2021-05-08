@@ -162,7 +162,7 @@ const crUsersadd = async(data)=>{
 //tim kiem thong tin san pham
 const searchttsp = async(data) =>{
     const ttsp = await db.book_users.findAll({
-        attributes : ['id','bookId', 'userId', 'status', 'soluongdat'],
+        // attributes : ['id','bookId', 'userId', 'soluongdat','status' ],
         include : [
             {
                 model : db.books,
