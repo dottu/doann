@@ -14,6 +14,13 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER
       },
+      soluongdat : {
+        type : Sequelize.INTEGER,
+      },
+      status : {
+        type: Sequelize.ENUM("1", "0"),
+        defaultValue: '0'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
