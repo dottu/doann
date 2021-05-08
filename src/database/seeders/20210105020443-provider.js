@@ -16,11 +16,11 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-   const time = Sequelize.literal('CURRENT_TIMESTMP()');
-   if(!ENABLE_TEMPLATE_FULL || !data(time).length){
-     return;
-   }
-   await queryInterface.bulkInsert('providers', data(time), {});
+  //  const time = Sequelize.literal('CURRENT_TIMESTMP()');
+  //  if(!ENABLE_TEMPLATE_FULL || !data(time).length){
+  //    return;
+  //  }
+  //  await queryInterface.bulkInsert('providers', data(time), {});
   },
 
   down: (queryInterface, Sequelize) => {
@@ -31,6 +31,6 @@ module.exports = {
       Example:
       return queryInterface.bulkDelete('People', null, {});
     */
-   return await queryInterface.bulkDelete('providers', null, {});
+  //  return await queryInterface.bulkDelete('providers', null, {});
   }
 };
