@@ -16,6 +16,7 @@ module.exports = {
       }], {});
     */
     // await queryInterface.bulkInsert('books', data(time), {});
+    
   },
 
   down: (queryInterface, Sequelize) => {
