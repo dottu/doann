@@ -58,14 +58,14 @@ head
             button.dropbtn #{ten}
               img(src="/uploads/90e54b0a7a59948dd910ba50954c702e.png", alt="",style = 'width : 32px; height:32px; float : right')
               .dropdown-content
-                //- a(href='/login', style = 'color : white') Đăng nhập
+                a(href='thongtindonhang', style = 'color : white') Đơn hàng của bạn
                 a(href='/logout', style = 'color : white') Đăng xuất
           else 
-            button.dropbtn #{ten}
+            button.dropbtn #{taikhoan}
               img(src="/uploads/90e54b0a7a59948dd910ba50954c702e.png", alt="",style = 'width : 32px; height:32px; float : right')
               .dropdown-content
                 a(href='/login', style = 'color : white') Đăng nhập
-                a(href='/logout', style = 'color : white') Đăng xuất
+                //- a(href='/logout', style = 'color : white') Đăng xuất
 
       div
         a(href="/gio-hang")

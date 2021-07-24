@@ -1,0 +1,190 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  title Log in
+  // Tell the browser to be responsive to screen width
+  meta(name='viewport' content='width=device-width, initial-scale=1')
+  // Font Awesome
+  link(rel='stylesheet' href='/plugins/fontawesome-free/css/all.min.css')
+  // Ionicons
+  link(rel='stylesheet' href='https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css')
+  // icheck bootstrap
+  link(rel='stylesheet' href='/plugins/icheck-bootstrap/icheck-bootstrap.min.css')
+  // Theme style
+  link(rel='stylesheet' href='/dist/css/adminlte.min.css')
+  // Google Font: Source Sans Pro
+  link(href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700' rel='stylesheet')
+  link(rel="stylesheet" href="/css/error.css")
+body(class="hold-transition login-page") 
+.login-box
+  .login-logo
+    a(href='../../index2.html')
+      //- b Admin
+      //- | LTE
+  .card
+    .card-body.login-card-body
+      p.login-box-msg Đăng nhập
+      form(action='/login' method='POST', id= "login")
+        .input-group.mb-3
+          input.form-control(type='text', name = 'phonenumber' placeholder='Số điện thoại' id="phonenumber")
+          .input-group-append
+            .input-group-text
+              span.fas.fa-envelope
+        span.error(id= "errorphonenumber")
+        .input-group.mb-3
+          input.form-control(type='password', name = 'password' placeholder='Mật khẩu từ 6 đến 32 ký tự',id = "password")
+          .input-group-append
+            .input-group-text
+              span.fas.fa-lock
+        span.error(id = "errorpassword") 
+        - if (messages.loi)
+          .message.loi
+            span.error= messages.loi
+        button.btn.btn-primary.btn-block(type='submit') Đăng nhập
+        //- a.text-center(href='Sign-up') Tạo tài khoản
+      button.btn.btn-primary.btn-block(type='button' data-toggle='modal' data-target='#form', style = "background: #007bff;margin-top: 5px;" )
+          span.glyphicon.glyphicon-edit
+              | Tạo tài khoản
+      #form.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+          .modal-dialog.modal-dialog-centered(role='document')
+            .modal-content
+              .modal-header.border-bottom-0
+                h5#exampleModalLabel.modal-title Tạo tài khoản
+                button.close(type='button' data-dismiss='modal' aria-label='Close')
+                  span(aria-hidden='true') &times;
+              form(action="/sign-up" method="POST", id ='sign-up' )
+                .modal-body                                  
+                  .form-group
+                    label(for='name') Họ tên
+                    input.form-control(type='text' ,name = 'name' , placeholder='Nhập họ tên', id ='name')
+                    span.error(id = 'erorr_name')
+                  .form-group
+                    label(for='phonenumber') Số điện thoại
+                    input.form-control(type='text' , name = 'phonenumber' placeholder='Nhập số điện thoại', id = 'createphonenumber')
+                    span.error(id = 'error_createphonenumber')
+                  .form-group
+                    label(for='password') Mật khẩu
+                    input.form-control(type='password',name = 'password' placeholder='Nhập Mật khẩu',id = 'pass')
+                    span.error(id= 'error_password')
+                  .form-group
+                    label(for='confirmpassword') Nhập lại mật khẩu
+                    input.form-control(type='password',name = 'confirmpassword' placeholder='Nhập lại mật khẩu', id= 'confirm')
+                    span.error(id = 'error_confirm')
+                .modal-footer.border-top-0.d-flex.justify-content-center
+                  button.btn.btn-success(type='submit') Tạo tài khoản
+    // /.login-card-body
+// /.login-box
+// jQuery Cannot read property 'phonenumber' of undefined
+// jQuery
+script(src='/plugins/jquery/jquery-3.5.1.min.js')
+script(src='../../plugins/bootstrap/js/bootstrap.bundle.min.js')
+// AdminLTE App
+script(src='../../dist/js/adminlte.min.js')
+
+
+
+script.
+
+  // Dang nhap
+  $(document).ready(function(){
+    $('#login').submit(function(){
+      var sdt = $.trim($('#phonenumber').val())
+      var matkhau = $.trim($('#password').val())
+
+      console.log("sdt", sdt)
+      console.log('matkhau', matkhau)
+
+      var flag = true
+
+      //- console.log('oekea', user)
+      //check sdt
+      if(sdt == ""){
+        $('#errorphonenumber').text('Vui lòng nhập số điện thoại')
+        $('#phonenumber').css('border', '1px solid rgb(132, 53, 52)')
+        flag = false
+      }else(
+        $('#phonenumber').text('')
+      )
+      //check matkhau
+      if(matkhau == ""){
+        $('#errorpassword').text('Vui lòng nhập mật khẩu từ 6 đến 32 ký tự ')
+        $('#password').css('border', '1px solid rgb(132, 53, 52)')
+        flag = false
+      }else{
+        if(matkhau.length < 6 || matkhau.length > 32){
+          $('#errorpassword').text('độ dài mật khẩu từ 6 đến 32 ký tự ')
+          $('#password').css('border', '1px solid rgb(132, 53, 52)')
+          flag = false
+        }
+        else{
+          $('#errorpassword').text('')
+        }
+      }
+      return flag
+    })
+  })
+
+  //Tao tai khoan
+  $(document).ready(function() {
+    $('#sign-up').submit(function(){
+      var name = $.trim($('#name').val())
+      var phone = $.trim($('#createphonenumber').val())
+      var password = $.trim($('#pass').val())
+      var confirmpassword = $.trim($('#confirm').val())
+
+      var kiemtra = true
+      if(name == ""){
+        $('#error_name').text('Vui lòng nhập họ tên')
+        $('#name').css('border', '1px solid rgb(132, 53, 52)')
+        kiemtra = false
+      }
+      else{
+        $('#name').text('')
+      }
+      //check phone
+      if(phone == ""){
+        $('#error_createphonenumber').text('Vui lòng nhập số điện thoại')
+        $('#createphonenumber').css('border', '1px solid rgb(132, 53, 52)')
+        kiemtra = false
+      }
+      else{
+        $('#createphonenumber').text('')
+      }
+      //check matkhau
+      if(password == ""){
+        $('#error_password').text('Vui lòng nhập mật khẩu')
+        $('#pass').css('border', '1px solid rgb(132, 53, 52)')
+        kiemtra = false
+      }
+      else{
+        if(password.length < 6  || password.length > 32){
+          $('#error_password').text('Bạn cần nhập mật khẩu từ 6 đến 32 ký tự')
+          $('#pass').css('border', '1px solid rgb(132, 53, 52)')
+          kiemtra = false
+        }
+        else{
+          $('#pass').text('')
+        }
+      }
+      //check confim
+      if(confirmpassword == ""){
+        $('#error_confirm').text('Vui lòng nhập lại mật khẩu')
+        $('#confirm').css('border', '1px solid rgb(132, 53, 52)')
+        kiemtra = false
+      }
+      else{
+        if(confirmpassword && confirmpassword != password){
+          $('#error_confirm').text('Mật khẩu nhập chưa chính xác')
+          $('#confirm').css('border', '1px solid rgb(132, 53, 52)')
+          kiemtra = false
+        }
+        else{
+          $('#confirm').text('')
+        }
+      }
+      return kiemtra
+      })
+    })
+
+
