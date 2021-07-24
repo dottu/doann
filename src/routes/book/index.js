@@ -292,8 +292,7 @@ router.get('/',catchHandle(async(req,res)=>{
         const getdanhmuc = await db.loaibooks.findAll({
             // 
         })
-        var tenngdung = 'Tài khoản'
-        res.render('view',{book:home.rows,page: home.pages,a,c,soluonggio:getsumcart, danhmuc : getdanhmuc, ten : tenngdung})
+        res.render('view',{book:home.rows,page: home.pages,a,c,soluonggio:getsumcart, danhmuc : getdanhmuc, taikhoan : 'Tài khoản'})
     }else{
         // if(!req.session.cartId){
         //     var getsumcart = 0
@@ -316,8 +315,7 @@ router.get('/',catchHandle(async(req,res)=>{
                 const getdanhmuc = await db.loaibooks.findAll({
                     // 
                 })
-                var tenngdung = 'Tài khoản'
-                res.render('view',{book:home.rows,page: home.pages,a,c,soluonggio:getsumcart, danhmuc : getdanhmuc, ten: tenngdung})
+                res.render('view',{book:home.rows,page: home.pages,a,c,soluonggio:getsumcart, danhmuc : getdanhmuc, taikhoan: 'Tài khoản'})
             }else{
                 if(req.session.userId && !req.session.cartId){
                     const getsumcart = await db.bookcarts.findAll({

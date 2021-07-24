@@ -1,0 +1,30 @@
+extends ../views/layout/cart.pug
+
+block content
+        h2 DANH SÁCH ĐƠN HÀNG MỚI NHẤT
+        if(infocart && infocart.length)
+        table.table.table-hover.text-nowrap
+            thead
+                tr
+                    //- th Khách hàng
+                    th Sản phẩm
+                    th Mã sản phẩm  
+                    th Trạng thái
+                    th Ngày đặt hàng
+                    //- th Nơi vận chuyển
+                    th Đơn giá
+                    th Thành tiền
+            tbody
+                each user in infocart
+                    each amount in user.book_users
+                        tr 
+                            td 
+                                img(src= '/uploads/'+amount.book.image, alt='', style = "width : 15%")
+                            td #{amount.book.masp}
+                            if(amount.book.status == 1)
+                                td Chờ xử lý
+                            else 
+                                td Đã hoàn thành
+                            td #{amount.book.createdAt}
+                            td #{amount.book.cost} VNĐ
+                            td #{(amount.soluongdat * amount.book.cost).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ

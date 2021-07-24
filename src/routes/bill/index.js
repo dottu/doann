@@ -9,7 +9,7 @@ import * as eResponse from './../../config/eResponse'
 import billServices from './../../webServices/billService'
 import cartServices from './../../webServices/cartService'
 import bookServices from './../../webServices/bookServices'
-import { Op, Sequelize } from 'sequelize'
+import { Op, Sequelize, where } from 'sequelize'
 import { forEach } from 'lodash'
 import { flushByUser, get } from '../../cache'
 import moment from 'moment'
@@ -115,7 +115,6 @@ router.get('/gio-hang',checkgiohang, catchHandle(async(req,res)=>{
             userId : req.session.userId,
             cartId : req.session.cartId
         }
-        const infoCart = await billServices.getCart(objbookcart)
 
         const infoAdd = await billServices.getinfocustom()
         // const infoCart = await billServices.getCart(objbookcart)
@@ -139,14 +138,61 @@ router.get('/gio-hang',checkgiohang, catchHandle(async(req,res)=>{
     
         //check ton tai 
         // if(!req.session.cartId)
+        const cart = await db.bookcarts.findAll({
+            where : {
+                cartId : req.session.cartId
+            }
+        })
+        var sumcart;
+
         const getsumcart = await db.bookcarts.findAll({
             where :{
                 [Op.and]:{
                     userId: req.session.userId,
-                    cartId : req.session.cartId
+                    // cartId : req.session.cartId
                 }
             }
         })
+        //lấy giỏ hàng của user sau đó check giỏ đã tồn tại hay ko nếu tồn tại thì lấy cái đã tồn tại còn chưa có thì tạo mới 
+        for(var i = 0; i < getsumcart.length; i++){
+            for(var k = 0; k < cart.length; k++){
+                if(getsumcart[i].cartId != req.session.cartId && getsumcart[i].bookId == cart[k].bookId){
+                    sumcart = cart[k].soluongdat + getsumcart[i].soluongdat
+                    console.log('============sumcart', sumcart)
+                    const Upcart = await db.bookcarts.update(
+                        {  
+                            soluongdat : sumcart
+                            
+                        },{
+                            where : {
+                                [Op.and]:{
+                                    bookId : getsumcart[i].bookId,
+                                    cartId : getsumcart[i].cartId
+                                }
+                            }
+                        }
+                    )
+                    const deletecart = await db.bookcarts.destroy({
+                        where : {
+                            [Op.and]:{
+                                cartId : cart[k].cartId,
+                                bookId : cart[k].bookId
+                            }
+                        }
+                    })
+                    console.log('cmmmmmmmmmmmmmmmmm')
+                }
+            }
+        }
+        const getsumcartnew = await db.bookcarts.findAll({
+            where :{
+                [Op.and]:{
+                    userId: req.session.userId,
+                    // cartId : req.session.cartId
+                }
+            }
+        })
+        const infoCart = await billServices.getCart(objbookcart)
         const address = await db.users.findAll({
             include :{
                 model : db.addresses,
@@ -163,7 +209,7 @@ router.get('/gio-hang',checkgiohang, catchHandle(async(req,res)=>{
         console.log('asd',address)
         // return res.send(address)
         var tenngdung = req.session.name
-        res.render('cart',{address:infoAdd, cart:infoCart, checkma: checkma,soluonggio:getsumcart,address: address, danhmuc : getdanhmuc, ten:tenngdung})
+        res.render('cart',{address:infoAdd, cart:infoCart, checkma: checkma,soluonggio:getsumcartnew,address: address, danhmuc : getdanhmuc, ten:tenngdung})
     }
 
 
@@ -600,6 +646,45 @@ router.get('/searchthongtinsp', catchHandle(async(req,res)=>{
     const search = await billServices.searchttsp(req.query)
     console.log('///////////////', search)
     res.render('searchttsp', {infobook : searchttsp})
+}))
+
+//thong tin sản phẩm của bạn 
+router.get('/thongtindonhang', catchHandle(async(req, res)=>{
+    const getProduct = await db.users.findAll({
+        include : [
+            {
+                model : db.book_users,
+                where :{
+                    userId : req.session.userId
+                },
+                required : true,
+                include :[
+                    {
+                        model : db.books,
+                        requied: true,
+
+                    }
+                ]
+            }
+        ]
+    })
+    // return res.send(getProduct)
+    res.render('infocart', {infocart: getProduct})
+}))
+router.get('/hoso', catchHandle(async function(req, res){
+    const getProfile = await db.users.findAll({
+        where : {
+            id : req.session.userId
+        },
+        include : [
+            {
+                model : db.addresses,
+                requied: true
+            }
+        ]
+    })
+    // return res.json(getProfile)
+    res.render('infouser', {infouser : getProfile})
 }))
 
 

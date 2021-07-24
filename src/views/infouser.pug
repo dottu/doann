@@ -1,0 +1,10 @@
+extends ../views/layout/cart.pug
+block content 
+    h2 Hồ sơ của Bạn
+    if(infouser && infouser.length)
+        each user in infouser
+            each add in user.addresses
+                p Tên :  #{add.name}
+                p Email : #{add.email}
+                p Phone : #{add.phonenumber}
+                p Address: #{add.address}

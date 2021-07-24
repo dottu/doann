@@ -63,6 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     books.hasMany(models.sales, {foreignKey: 'bookId'})
     // //
     books.hasMany(models.warehouses, {foreignKey : 'bookId'})
+    books.hasMany(models.book_users,{foreignKey : 'bookId', as : 'bookuser'})
     //
     // books.hasMany(models.BookUsers, {foreignKey : 'bookId', sourceKey: 'id', as: 'haha'})
     // books.hasMany(models.BookUsers, {foreignKey : 'bookId'})
