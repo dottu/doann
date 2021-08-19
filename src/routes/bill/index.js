@@ -687,6 +687,6 @@ router.get('/hoso', catchHandle(async function(req, res){
     // return res.json(getProfile)
     res.render('infouser', {infouser : getProfile})
 }))
-
+//deo co thay doi gi
 //Bacasasffa
 export default router
