@@ -687,12 +687,5 @@ router.get('/hoso', catchHandle(async function(req, res){
     res.render('infouser', {infouser : getProfile})
 }))
 
-///abcccc
-
-////sdaskfhasfkhs đáhfsdhafhafh
-
-
-
-
-// asasfasfasgagag
+//Bacasasffa
 export default router
