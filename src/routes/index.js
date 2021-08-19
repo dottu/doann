@@ -6,6 +6,6 @@ import login from './login'
 import cart from './cart'
 import comment from './comment'
 
-const router = [bookRouter,loaibook,bill,login,cart,comment]
+const router = [bookRouter,loaibook,bill,login,cart,comment] 
 
 export default router
